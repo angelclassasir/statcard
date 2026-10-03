@@ -1,42 +1,42 @@
-   **Language:** [English](README.md) | [Español](README.es.md)
 
+---
+
+## `README.es.md`
+
+```markdown
 # 🎴 StatCard
 
 > Genera tarjetas visuales con tus estadísticas de tus juegos FPS favoritos.
 
 [![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Dual%20%28PolyForm%20NC%20%2B%20Commercial%29-lightgrey.svg)](LICENSE)
 [![Ruff](https://img.shields.io/badge/style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 
 **Idioma:** [English](README.md) | **Español**
 
 ---
 
-`statcard` obtiene tus estadísticas de **Valorant**, **CS2 (FACEIT)** y **CS2 (Premier/MM)**, las unifica en un formato común y las renderiza en una tarjeta PNG lista para compartir en Discord, redes sociales o tu perfil de GitHub.
+`statcard` obtiene tus estadísticas de **Valorant**, las unifica en un formato común y las renderiza en una tarjeta PNG lista para compartir en Discord, redes sociales o tu perfil de GitHub.
 
-> ⚠️ **Estado del proyecto:** En desarrollo activo (Fase 1). Construyendo la base del backend y las integraciones con las APIs.
+> ⚠️ **Estado del proyecto:** v1 (Valorant) funcional — pulido del CLI y tests offline en curso. El soporte para CS2 está planeado para la v2 (ver [Hoja de ruta](#-hoja-de-ruta)).
 
 ---
 
 ## ✨ Características
 
-- 🎮 **Soporte multi-juego**
-  - **Valorant** mediante [HenrikDev API](https://docs.henrikdev.xyz)
-  - **CS2 (FACEIT)** mediante la API oficial de FACEIT
-  - **CS2 (Premier/MM)** mediante Leetify
-- 🎨 **Tema oscuro unificado** en todas las tarjetas
-- 🖼️ **Fondos dinámicos** seleccionados según tus estadísticas (agentes, mapas, rangos)
-- 💾 **Caché inteligente en disco** para respetar los límites de peticiones de las APIs
+- 🎮 **Soporte para Valorant** mediante la [HenrikDev API](https://docs.henrikdev.xyz)
+- 🎨 **Tema oscuro** con una paleta limpia y moderna
+- 🔤 **Fuentes según alfabeto**: latín (Chakra Petch), coreano (Noto Sans KR), japonés (Noto Sans JP), chino (Noto Sans SC), cirílico (Noto Sans) — los nombres se renderizan correctamente sea cual sea el alfabeto
+- 💾 **Caché en disco inteligente** (TTL de 10 min) para respetar los límites de las APIs
 - ⚡ **Diseño CLI-first**: un comando, una tarjeta
-- 🌐 **Interfaz web** *(planificada)*: genera tu tarjeta sin instalar nada
+- 🧪 **Suite de tests offline** usando respuestas guardadas
+- 🌐 **Interfaz web** *(planificada para la v2)*: genera tu tarjeta sin instalar nada
 
-## 🖼️ Ejemplos
+## 🖼️ Ejemplo
 
-> Las tarjetas aparecerán aquí cuando se complete la Fase 2.
-
-| Valorant | CS2 (FACEIT) | CS2 (Premier) |
-| :---: | :---: | :---: |
-| *Próximamente* | *Próximamente* | *Próximamente* |
+| Valorant |
+| :---: |
+| ![Tarjeta Valorant de ejemplo](examples/valorant_card.png) |
 
 ## 🛠️ Stack Tecnológico
 
@@ -49,22 +49,31 @@
 | Gestión de entorno | `uv` |
 | Testing | `pytest` |
 | Linting y formateo | `ruff` |
-| Futura API web | FastAPI + Cloudflare Pages |
+| Chequeo de tipos | `pyrefly` |
 
 ## 🗺️ Hoja de ruta
+
+### v1 (actual)
 
 | Fase | Descripción | Estado |
 | :---: | --- | :---: |
 | 0 | Configuración del repositorio y estructura inicial | ✅ Hecho |
-| 1 | Integración con la API de Valorant (HenrikDev) + modelos de datos | 🚧 En curso |
-| 2 | Primer renderizado de tarjeta con Pillow + tema oscuro | ⬜ |
-| 3 | Caché en disco + gestión de errores | ⬜ |
-| 4 | Integración con CS2 (FACEIT) | ⬜ |
-| 5 | Integración con CS2 (Premier/MM) vía Leetify | ⬜ |
-| 6 | Pulido del CLI, tests y CI | ⬜ |
-| 7 | Presentación: README, ejemplos, avisos legales | ⬜ |
-| 8 | *(Futuro)* Backend FastAPI + frontend web | ⬜ |
+| 1 | Integración con la API de Valorant (HenrikDev) + modelos de datos | ✅ Hecho |
+| 2 | Primer renderizado de tarjeta con Pillow + tema oscuro | ✅ Hecho |
+| 3 | Caché en disco + gestión de errores | ✅ Hecho |
+| 4 | *(omitida — CS2 movido a la v2)* | ⏸️ |
+| 5 | CLI con `argparse` + tests offline | 🚧 En curso |
+| 6 | README, ejemplos, avisos legales, subida a GitHub | ⬜ |
+
+### v2 (planeada)
+
+| Fase | Descripción | Estado |
+| :---: | --- | :---: |
+| 7 | Soporte para CS2 (FACEIT o Leetify, ver nota abajo) | ⬜ |
+| 8 | Backend FastAPI + frontend web (Cloudflare Pages) | ⬜ |
 | 9 | *(Opcional)* Bot de Discord con comando `/stats` | ⬜ |
+
+> **Sobre CS2:** Valve no expone una API pública para las estadísticas competitivas de CS2. Las alternativas o requieren verificación de identidad (FACEIT Data API) o dependen de que el jugador use un servicio de análisis de terceros (Leetify). El soporte de CS2 llegará en la v2, una vez elegida la fuente de datos.
 
 ## 🚀 Primeros pasos
 
@@ -72,10 +81,7 @@
 
 - Python 3.12+
 - [uv](https://docs.astral.sh/uv/) (recomendado) o `pip` + `venv`
-- Claves de API:
-  - **Valorant:** [Panel de HenrikDev](https://dashboard.henrikdev.xyz/)
-  - **CS2 (FACEIT):** [FACEIT Developers](https://developers.faceit.com/)
-  - **CS2 (Premier/MM):** Leetify API
+- Una clave de HenrikDev: [consíguela aquí](https://dashboard.henrikdev.xyz/)
 
 ### Instalación
 
@@ -87,56 +93,63 @@ cd statcard
 # 2. Instala las dependencias
 uv sync
 
-# 3. Configura tus claves de API
+# 3. Configura tu clave de API
 cp .env.example .env
-# Edita .env y añade tus claves
+# Edita .env y añade tu HENRIKDEV_API_KEY
 ```
 
 ### Uso
 
 ```bash
-# Valorant
-python -m statcard valorant "NombreJugador#TAG"
-
-# CS2 via FACEIT
-python -m statcard faceit "tu_nickname_faceit"
-
-# CS2 Premier/MM via Leetify
-python -m statcard cs2 "tu_steamid"
+# Genera tu tarjeta de Valorant
+python -m statcard valorant "TuNombre#TuTag"
 ```
 Las imágenes de salida se guardan en output/.
 
-### 📁 Estructura del Proyecto
+## Fuentes
+El proyecto usa fuentes bajo la licencia SIL Open Font License:
+
+    Chakra Petch (latín + tailandés) — incluida en el repo.
+    Noto Sans KR / JP / SC + Noto Sans (respaldos CJK + cirílico) — pesadas (~40 MB en total), por lo que se descargan localmente y se ignoran en git. Ver assets/fonts/README.md para los comandos de descarga.
+
+
+## 📁 Estructura del Proyecto
 statcard/
 ├── src/statcard/
-│   ├── __main__.py       # Punto de entrada CLI
+│   ├── __main__.py       # Punto de entrada del CLI
 │   ├── models.py         # Formato común de estadísticas (pydantic)
-│   ├── cache.py          # Caché en disco con expiración
+│   ├── cache.py          # Caché en disco con caducidad
 │   ├── render.py         # Renderizado de tarjetas (Pillow)
 │   ├── providers/
-│   │   ├── valorant.py   # HenrikDev → formato común
-│   │   ├── faceit.py     # FACEIT → formato común
-│   │   └── cs2.py        # Leetify → formato común
+│   │   └── valorant.py   # HenrikDev -> formato común
 │   └── themes/
 │       └── dark.py       # Colores, fuentes, tamaños
-├── assets/               # Fuentes, iconos, fondos (licencias gratuitas)
+├── assets/
+│   └── fonts/            # Fuentes SIL OFL (ver assets/fonts/README.md)
 ├── tests/
-│   ├── fixtures/         # Respuestas API guardadas para testing offline
+│   ├── fixtures/         # Respuestas guardadas de las APIs para tests offline
 │   └── test_*.py
 ├── examples/             # Tarjetas de ejemplo para este README
 ├── output/               # Tarjetas generadas (ignorado por git)
-├── .env.example          # Plantilla para claves de API
+├── .env.example          # Plantilla para las claves de API
 └── pyproject.toml
 
 El principio de diseño clave es: cada juego tiene su propio provider que siempre devuelve el mismo formato común. El renderizador nunca sabe de dónde provienen los datos. Añadir un nuevo juego es simplemente escribir un módulo provider más.
 
-### ⚖️ Avisos Legales
-Este es un proyecto educativo de fans, sin fines comerciales.
+## ⚖️ Avisos legales
+Este es un proyecto educativo hecho por fans, sin ánimo de lucro.
 
-    No está afiliado, respaldado ni patrocinado por Riot Games, Valve Corporation, FACEIT o Leetify.
-    Los datos de Valorant se obtienen a través de la API no oficial de HenrikDev.
-    Los datos de CS2 se obtienen a través de la API oficial de FACEIT y/o Leetify, con el debido reconocimiento.
-    Assets: Todos los recursos visuales (fondos, iconos, fuentes) son originales, creados por mí o con licencias gratuitas/open-source. Las marcas registradas de los juegos pertenecen a sus respectivos dueños.
+    No está afiliado, respaldado ni patrocinado por Riot Games.
+    Los datos de Valorant se obtienen a través de la API no oficial HenrikDev.
 
-### 📄 Licencia
-Este proyecto está licenciado bajo la Licencia MIT.
+    Valorant y sus marcas comerciales son propiedad de Riot Games, Inc.
+    Assets: todos los recursos visuales (fondos, iconos, fuentes) son originales, creados por el autor, o provienen de licencias libres/abiertas (SIL OFL).
+
+## 📄 Licencia
+
+Este proyecto usa una **licencia dual**:
+
+- **Uso no comercial** (personal, educativo, hobby): gratuito bajo la [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0).
+- **Uso comercial**: requiere autorización expresa y por escrito del autor. ¿Quieres usar statcard con fines comerciales? [Abre un issue](https://github.com/angelclassasir/statcard/issues) o contáctame para negociar una licencia comercial.
+
+Consulta el archivo [LICENSE](LICENSE) para los términos completos.
