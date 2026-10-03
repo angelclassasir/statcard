@@ -1,0 +1,96 @@
+
+---
+
+## ✅ `.gitignore` corregido
+
+```gitignore
+# ==========================
+# Environments and Secrets
+# ==========================
+.env
+.env.*
+!.env.example
+
+# ==========================
+# Python
+# ==========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ==========================
+# Virtual Environments
+# ==========================
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# ==========================
+# Testing and Coverage
+# ==========================
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# ==========================
+# Project Cache
+# ==========================
+.cache/
+statcard_cache/
+
+# ==========================
+# Linters
+# ==========================
+.ruff_cache/
+.mypy_cache/
+
+# ==========================
+# IDEs and Editors
+# ==========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ==========================
+# Logs
+# ==========================
+*.log
+logs/
+
+# ==========================
+# Generated Files
+# ==========================
+output/
+/*.png
+!assets/**/*.png
+!examples/**/*.png
