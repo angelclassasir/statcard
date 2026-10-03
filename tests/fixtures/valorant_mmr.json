@@ -1,0 +1,3421 @@
+{
+  "status": 200,
+  "data": {
+    "account": {
+      "name": "DavidNavey고인물",
+      "tag": "ntn",
+      "puuid": "048692a8-d1a2-5070-83a8-3efe102984ae"
+    },
+    "peak": {
+      "season": {
+        "id": "dcde7346-4085-de4f-c463-2489ed47983b",
+        "short": "e9a3"
+      },
+      "ranking_schema": "ascendant",
+      "tier": {
+        "id": 20,
+        "name": "Diamond 3"
+      },
+      "rr": 0
+    },
+    "current": {
+      "tier": {
+        "id": 20,
+        "name": "Diamond 3"
+      },
+      "rr": 50,
+      "last_change": 19,
+      "elo": 1750,
+      "games_needed_for_rating": 0,
+      "rank_protection_shields": 2,
+      "leaderboard_placement": null
+    },
+    "seasonal": [
+      {
+        "season": {
+          "id": "52e9749a-429b-7060-99fe-4595426a0cf7",
+          "short": "e2a3"
+        },
+        "wins": 2,
+        "games": 8,
+        "end_tier": {
+          "id": 5,
+          "name": "Iron 3"
+        },
+        "end_rr": 54,
+        "ranking_schema": "base",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 5,
+            "name": "Iron 3"
+          },
+          {
+            "id": 5,
+            "name": "Iron 3"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "2a27e5d2-4d30-c9e2-b15a-93b8909a442c",
+          "short": "e3a1"
+        },
+        "wins": 12,
+        "games": 28,
+        "end_tier": {
+          "id": 8,
+          "name": "Bronze 3"
+        },
+        "end_rr": 2,
+        "ranking_schema": "base",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "4cb622e1-4244-6da3-7276-8daaf1c01be2",
+          "short": "e3a2"
+        },
+        "wins": 10,
+        "games": 23,
+        "end_tier": {
+          "id": 8,
+          "name": "Bronze 3"
+        },
+        "end_rr": 46,
+        "ranking_schema": "base",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "a16955a5-4ad0-f761-5e9e-389df1c892fb",
+          "short": "e3a3"
+        },
+        "wins": 7,
+        "games": 12,
+        "end_tier": {
+          "id": 9,
+          "name": "Silver 1"
+        },
+        "end_rr": 10,
+        "ranking_schema": "base",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "573f53ac-41a5-3a7d-d9ce-d6a6298e5704",
+          "short": "e4a1"
+        },
+        "wins": 22,
+        "games": 47,
+        "end_tier": {
+          "id": 9,
+          "name": "Silver 1"
+        },
+        "end_rr": 3,
+        "ranking_schema": "base",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 7,
+            "name": "Bronze 2"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "d929bc38-4ab6-7da4-94f0-ee84f8ac141e",
+          "short": "e4a2"
+        },
+        "wins": 34,
+        "games": 64,
+        "end_tier": {
+          "id": 10,
+          "name": "Silver 2"
+        },
+        "end_rr": 62,
+        "ranking_schema": "base",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 9,
+            "name": "Silver 1"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          },
+          {
+            "id": 8,
+            "name": "Bronze 3"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "3e47230a-463c-a301-eb7d-67bb60357d4f",
+          "short": "e4a3"
+        },
+        "wins": 27,
+        "games": 46,
+        "end_tier": {
+          "id": 12,
+          "name": "Gold 1"
+        },
+        "end_rr": 55,
+        "ranking_schema": "base",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 11,
+            "name": "Silver 3"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "67e373c7-48f7-b422-641b-079ace30b427",
+          "short": "e5a1"
+        },
+        "wins": 20,
+        "games": 51,
+        "end_tier": {
+          "id": 12,
+          "name": "Gold 1"
+        },
+        "end_rr": 73,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 10,
+            "name": "Silver 2"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "7a85de9a-4032-61a9-61d8-f4aa2b4a84b6",
+          "short": "e5a2"
+        },
+        "wins": 24,
+        "games": 48,
+        "end_tier": {
+          "id": 13,
+          "name": "Gold 2"
+        },
+        "end_rr": 44,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "aca29595-40e4-01f5-3f35-b1b3d304c96e",
+          "short": "e5a3"
+        },
+        "wins": 27,
+        "games": 44,
+        "end_tier": {
+          "id": 16,
+          "name": "Platinum 2"
+        },
+        "end_rr": 23,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "9c91a445-4f78-1baa-a3ea-8f8aadf4914d",
+          "short": "e6a1"
+        },
+        "wins": 15,
+        "games": 38,
+        "end_tier": {
+          "id": 13,
+          "name": "Gold 2"
+        },
+        "end_rr": 47,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "34093c29-4306-43de-452f-3f944bde22be",
+          "short": "e6a2"
+        },
+        "wins": 20,
+        "games": 36,
+        "end_tier": {
+          "id": 15,
+          "name": "Platinum 1"
+        },
+        "end_rr": 50,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "2de5423b-4aad-02ad-8d9b-c0a931958861",
+          "short": "e6a3"
+        },
+        "wins": 10,
+        "games": 19,
+        "end_tier": {
+          "id": 16,
+          "name": "Platinum 2"
+        },
+        "end_rr": 21,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "0981a882-4e7d-371a-70c4-c3b4f46c504a",
+          "short": "e7a1"
+        },
+        "wins": 17,
+        "games": 45,
+        "end_tier": {
+          "id": 13,
+          "name": "Gold 2"
+        },
+        "end_rr": 65,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "03dfd004-45d4-ebfd-ab0a-948ce780dac4",
+          "short": "e7a2"
+        },
+        "wins": 16,
+        "games": 30,
+        "end_tier": {
+          "id": 14,
+          "name": "Gold 3"
+        },
+        "end_rr": 70,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "4401f9fd-4170-2e4c-4bc3-f3b4d7d150d1",
+          "short": "e7a3"
+        },
+        "wins": 15,
+        "games": 31,
+        "end_tier": {
+          "id": 14,
+          "name": "Gold 3"
+        },
+        "end_rr": 96,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "ec876e6c-43e8-fa63-ffc1-2e8d4db25525",
+          "short": "e8a1"
+        },
+        "wins": 32,
+        "games": 63,
+        "end_tier": {
+          "id": 15,
+          "name": "Platinum 1"
+        },
+        "end_rr": 48,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "22d10d66-4d2a-a340-6c54-408c7bd53807",
+          "short": "e8a2"
+        },
+        "wins": 13,
+        "games": 26,
+        "end_tier": {
+          "id": 16,
+          "name": "Platinum 2"
+        },
+        "end_rr": 15,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "4539cac3-47ae-90e5-3d01-b3812ca3274e",
+          "short": "e8a3"
+        },
+        "wins": 18,
+        "games": 39,
+        "end_tier": {
+          "id": 17,
+          "name": "Platinum 3"
+        },
+        "end_rr": 0,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "52ca6698-41c1-e7de-4008-8994d2221209",
+          "short": "e9a1"
+        },
+        "wins": 38,
+        "games": 77,
+        "end_tier": {
+          "id": 17,
+          "name": "Platinum 3"
+        },
+        "end_rr": 57,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 13,
+            "name": "Gold 2"
+          },
+          {
+            "id": 12,
+            "name": "Gold 1"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "292f58db-4c17-89a7-b1c0-ba988f0e9d98",
+          "short": "e9a2"
+        },
+        "wins": 27,
+        "games": 54,
+        "end_tier": {
+          "id": 18,
+          "name": "Diamond 1"
+        },
+        "end_rr": 82,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "dcde7346-4085-de4f-c463-2489ed47983b",
+          "short": "e9a3"
+        },
+        "wins": 56,
+        "games": 107,
+        "end_tier": {
+          "id": 20,
+          "name": "Diamond 3"
+        },
+        "end_rr": 0,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "476b0893-4c2e-abd6-c5fe-708facff0772",
+          "short": "e10a1"
+        },
+        "wins": 59,
+        "games": 133,
+        "end_tier": {
+          "id": 17,
+          "name": "Platinum 3"
+        },
+        "end_rr": 37,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "16118998-4705-5813-86dd-0292a2439d90",
+          "short": "e10a2"
+        },
+        "wins": 23,
+        "games": 56,
+        "end_tier": {
+          "id": 17,
+          "name": "Platinum 3"
+        },
+        "end_rr": 10,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "aef237a0-494d-3a14-a1c8-ec8de84e309c",
+          "short": "e10a3"
+        },
+        "wins": 25,
+        "games": 47,
+        "end_tier": {
+          "id": 19,
+          "name": "Diamond 2"
+        },
+        "end_rr": 58,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "ac12e9b3-47e6-9599-8fa1-0bb473e5efc7",
+          "short": "e10a4"
+        },
+        "wins": 24,
+        "games": 54,
+        "end_tier": {
+          "id": 16,
+          "name": "Platinum 2"
+        },
+        "end_rr": 51,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "5adc33fa-4f30-2899-f131-6fba64c5dd3a",
+          "short": "e10a5"
+        },
+        "wins": 8,
+        "games": 22,
+        "end_tier": {
+          "id": 16,
+          "name": "Platinum 2"
+        },
+        "end_rr": 40,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "4c4b8cff-43eb-13d3-8f14-96b783c90cd2",
+          "short": "e10a6"
+        },
+        "wins": 19,
+        "games": 37,
+        "end_tier": {
+          "id": 16,
+          "name": "Platinum 2"
+        },
+        "end_rr": 87,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "3ea2b318-423b-cf86-25da-7cbb0eefbe2d",
+          "short": "e11a1"
+        },
+        "wins": 35,
+        "games": 62,
+        "end_tier": {
+          "id": 19,
+          "name": "Diamond 2"
+        },
+        "end_rr": 50,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 18,
+            "name": "Diamond 1"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 17,
+            "name": "Platinum 3"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 16,
+            "name": "Platinum 2"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 15,
+            "name": "Platinum 1"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 14,
+            "name": "Gold 3"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "9d85c932-4820-c060-09c3-668636d4df1b",
+          "short": "e11a2"
+        },
+        "wins": 6,
+        "games": 11,
+        "end_tier": {
+          "id": 20,
+          "name": "Diamond 3"
+        },
+        "end_rr": 0,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "ce2783e8-44fc-dd48-3da3-33b5ba6c4a22",
+          "short": "e11a3"
+        },
+        "wins": 4,
+        "games": 5,
+        "end_tier": {
+          "id": 20,
+          "name": "Diamond 3"
+        },
+        "end_rr": 68,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "4f0864e2-40af-28a4-de2c-0e9e64e75f23",
+          "short": "e11a4"
+        },
+        "wins": 19,
+        "games": 42,
+        "end_tier": {
+          "id": 20,
+          "name": "Diamond 3"
+        },
+        "end_rr": 57,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 19,
+            "name": "Diamond 2"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          },
+          {
+            "id": 0,
+            "name": "Unrated"
+          }
+        ]
+      },
+      {
+        "season": {
+          "id": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+          "short": "e11a5"
+        },
+        "wins": 2,
+        "games": 4,
+        "end_tier": {
+          "id": 20,
+          "name": "Diamond 3"
+        },
+        "end_rr": 50,
+        "ranking_schema": "ascendant",
+        "leaderboard_placement": null,
+        "act_wins": [
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          },
+          {
+            "id": 20,
+            "name": "Diamond 3"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "status": 200,
+  "data": {
+    "puuid": "048692a8-d1a2-5070-83a8-3efe102984ae",
+    "region": "eu",
+    "account_level": 362,
+    "name": "DavidNavey고인물",
+    "tag": "ntn",
+    "card": {
+      "small": "https://media.valorant-api.com/playercards/9ef2f845-4ab5-2350-ea38-0795bb21ed05/smallart.png",
+      "large": "https://media.valorant-api.com/playercards/9ef2f845-4ab5-2350-ea38-0795bb21ed05/largeart.png",
+      "wide": "https://media.valorant-api.com/playercards/9ef2f845-4ab5-2350-ea38-0795bb21ed05/wideart.png",
+      "id": "9ef2f845-4ab5-2350-ea38-0795bb21ed05"
+    },
+    "last_update": "23 minutes ago",
+    "last_update_raw": 1791039212
+  }
+}
