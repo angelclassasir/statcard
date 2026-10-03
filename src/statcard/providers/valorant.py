@@ -195,7 +195,7 @@ def parse_stats(payloads: dict[str, Any], name: str, tag: str) -> PlayerStats:
     games = season.get("games") or 0
     win_rate = round(wins / games * 100, 1) if games else 0.0
 
-        # Season identifiers can come in different formats depending on the
+    # Season identifiers can come in different formats depending on the
     # endpoint (full UUID vs short code), so compare against all of them.
     season_ids = {
         (season.get("season") or {}).get("id"),

@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Generate visual, shareable stat cards for Valorant and CS2"
 readme = "README.md"
 requires-python = ">=3.12"
-license = { text = "MIT" }
+license = { text = "PolyForm-Noncommercial-1.0.0" }
 authors = [
     { name = "angelclassasir" },
 ]
@@ -40,6 +40,7 @@ pythonpath = ["src"]
 
 [tool.pyrefly]
 search-path = ["src"]
+project-includes = ["src", "tests", "scripts"]
 
 [dependency-groups]
 dev = [
