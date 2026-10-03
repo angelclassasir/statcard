@@ -1,5 +1,4 @@
 """Valorant provider: HenrikDev API -> common PlayerStats format."""
-from statcard import cache
 import os
 from datetime import datetime
 from typing import Any
@@ -7,6 +6,7 @@ from typing import Any
 import httpx
 from dotenv import load_dotenv
 
+from statcard import cache
 from statcard.models import PlayerStats
 
 load_dotenv()
@@ -88,10 +88,6 @@ async def fetch_raw_payloads(
         )
 
     payloads = {"account": account, "mmr": mmr, "matches": matches}
-    cache.set(cache_key, payloads)
-    return payloads
-
-    payloads = {"account": account, "mmr": mmr, "matches": matches, "lifetime": lifetime}
     cache.set(cache_key, payloads)
     return payloads
 
@@ -195,7 +191,6 @@ def parse_stats(payloads: dict[str, Any], name: str, tag: str) -> PlayerStats:
 
     # Current season stats (wins, games, season_id)
     season = seasonal[0] if seasonal else {}
-    season_id = (season.get("season") or {}).get("id")
     wins = season.get("wins") or 0
     games = season.get("games") or 0
     win_rate = round(wins / games * 100, 1) if games else 0.0
@@ -261,7 +256,9 @@ def parse_stats(payloads: dict[str, Any], name: str, tag: str) -> PlayerStats:
     )
 
 
-async def fetch_valorant_stats(name: str, tag: str, region: str = "eu") -> PlayerStats:
+async def fetch_valorant_stats(
+    name: str, tag: str, region: str = "eu", use_cache: bool = True
+) -> PlayerStats:
     """Public entry point: fetch and parse Valorant stats for one player."""
-    payloads = await fetch_raw_payloads(name, tag, region=region)
+    payloads = await fetch_raw_payloads(name, tag, region=region, use_cache=use_cache)
     return parse_stats(payloads, name, tag)

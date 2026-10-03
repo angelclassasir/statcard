@@ -1,5 +1,5 @@
 """Card rendering with Pillow: PlayerStats -> PNG image."""
-
+import contextlib
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -39,10 +39,9 @@ def _font(path: Path, size: int, variant: str | None = None) -> ImageFont.FreeTy
     if key not in _FONT_CACHE:
         font = ImageFont.truetype(str(path), size)
         if variant is not None:
-            try:
+            # static font or unknown variant: keep the default instance
+            with contextlib.suppress(OSError, AttributeError, KeyError):
                 font.set_variation_by_name(variant)
-            except (OSError, AttributeError, KeyError):
-                pass  # static font or unknown variant: keep the default instance
         _FONT_CACHE[key] = font
     return _FONT_CACHE[key]
 
@@ -51,13 +50,23 @@ def _detect_script(text: str) -> str:
     """Detect the dominant non-Latin script used in a player name."""
     codepoints = [ord(ch) for ch in text]
     # Hangul syllables and jamo (Korean)
-    if any(0xAC00 <= cp <= 0xD7AF or 0x1100 <= cp <= 0x11FF or 0x3130 <= cp <= 0x318F for cp in codepoints):
+    if any(
+        0xAC00 <= cp <= 0xD7AF
+        or 0x1100 <= cp <= 0x11FF
+        or 0x3130 <= cp <= 0x318F
+        for cp in codepoints
+    ):
         return "kr"
     # Hiragana and katakana (Japanese)
     if any(0x3040 <= cp <= 0x30FF for cp in codepoints):
         return "jp"
     # CJK unified ideographs (Chinese, and kanji without kana)
-    if any(0x4E00 <= cp <= 0x9FFF or 0x3400 <= cp <= 0x4DBF or 0xF900 <= cp <= 0xFAFF for cp in codepoints):
+    if any(
+        0x4E00 <= cp <= 0x9FFF
+        or 0x3400 <= cp <= 0x4DBF
+        or 0xF900 <= cp <= 0xFAFF
+        for cp in codepoints
+    ):
         return "cjk"
     # Cyrillic (Russian and friends)
     if any(0x0400 <= cp <= 0x4FF for cp in codepoints):

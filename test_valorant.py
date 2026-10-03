@@ -2,7 +2,6 @@
 
 Run with: uv run python test_valorant.py
 """
-from statcard.render import save_card
 import asyncio
 import json
 from pathlib import Path
@@ -14,6 +13,7 @@ from statcard.providers.valorant import (
     fetch_raw_payloads,
     parse_stats,
 )
+from statcard.render import save_card
 
 # --- Edit these to your own account ---
 RIOT_NAME = "Horcus "
@@ -57,7 +57,10 @@ async def main() -> None:
     print(f"Rank   : {stats.current_rank}  (peak: {stats.peak_rank})")
     print(f"Level  : {stats.level}")
     print(f"Season : {stats.wins}W / {stats.total_matches}G  ({stats.get_win_rate_display()})")
-    print(f"K/D    : {stats.kills}K / {stats.deaths}D  ({stats.get_kd_display()}) [{stats.kd_scope.lower()}]")
+    print(
+        f"K/D    : {stats.kills}K / {stats.deaths}D  "
+        f"({stats.get_kd_display()}) [{stats.kd_scope.lower()}]"
+    )
     print("-" * 52)
     for i, match in enumerate(stats.recent_matches, 1):
         result = "WIN " if match["won"] else "LOSS" if match["won"] is False else "????"

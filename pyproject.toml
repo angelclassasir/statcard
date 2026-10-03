@@ -16,12 +16,6 @@ dependencies = [
     "python-dotenv>=1.0",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0",
-    "ruff>=0.4",
-]
-
 [project.scripts]
 statcard = "statcard.__main__:main"
 
@@ -50,4 +44,6 @@ search-path = ["src"]
 [dependency-groups]
 dev = [
     "pyrefly>=1.3.2",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
 ]
