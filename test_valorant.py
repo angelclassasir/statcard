@@ -2,7 +2,7 @@
 
 Run with: uv run python test_valorant.py
 """
-
+from statcard.render import save_card
 import asyncio
 import json
 from pathlib import Path
@@ -67,7 +67,8 @@ async def main() -> None:
             f"{match['kills']}K/{match['deaths']}D  {match['agent']}"
         )
     print("=" * 52)
-
+    path = save_card(stats)
+    print(f"\nCard saved to: {path}")
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -94,3 +94,6 @@ output/
 /*.png
 !assets/**/*.png
 !examples/**/*.png
+
+# Heavy fallback fonts (downloaded locally, documented in README)
+assets/fonts/NotoSans*.ttf
