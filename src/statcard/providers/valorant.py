@@ -1,5 +1,5 @@
 """Valorant provider: HenrikDev API -> common PlayerStats format."""
-
+from statcard import cache
 import os
 from datetime import datetime
 from typing import Any
@@ -36,49 +36,123 @@ def _auth_headers() -> dict[str, str]:
 
 async def _get_json(client: httpx.AsyncClient, path: str) -> dict[str, Any]:
     """Perform a GET request against HenrikDev and return the parsed JSON body."""
-    response = await client.get(f"{HENRIKDEV_BASE_URL}{path}", headers=_auth_headers())
-    response.raise_for_status()
+    url = f"{HENRIKDEV_BASE_URL}{path}"
+    try:
+        response = await client.get(url, headers=_auth_headers())
+        response.raise_for_status()
+    except httpx.HTTPStatusError as exc:
+        status = exc.response.status_code
+        if status == 401:
+            raise ValorantProviderError(
+                "HenrikDev rejected the API key (401). Check HENRIKDEV_API_KEY in .env."
+            ) from exc
+        if status == 404:
+            raise ValorantProviderError(f"Player not found (404): {path}") from exc
+        if status == 429:
+            raise ValorantProviderError(
+                "Rate limit reached (429). Wait a minute or rely on the cache."
+            ) from exc
+        raise ValorantProviderError(f"HenrikDev API error ({status}) for {path}") from exc
+    except httpx.RequestError as exc:
+        raise ValorantProviderError(
+            "Could not reach the HenrikDev API (network down or blocked)."
+        ) from exc
     return response.json()
 
+CACHE_TTL_SECONDS = 10 * 60
 
-async def fetch_raw_payloads(name: str, tag: str, region: str = "eu") -> dict[str, Any]:
-    """Fetch raw JSON payloads (account, MMR, matches) without parsing them.
+async def fetch_raw_payloads(
+    name: str, tag: str, region: str = "eu", use_cache: bool = True
+) -> dict[str, Any]:
+    """Fetch raw JSON payloads (account, MMR, matches, lifetime) with disk cache."""
+    name, tag = name.strip(), tag.strip()
 
-    Kept separate from parsing so tests can save these payloads as fixtures.
-    """
     if region not in VALID_REGIONS:
         raise ValorantProviderError(
             f"Unknown region '{region}'. Valid regions: {', '.join(VALID_REGIONS)}"
         )
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
+    cache_key = f"valorant:{region}:{name.lower()}#{tag.lower()}"
+    if use_cache:
+        cached = cache.get(cache_key, CACHE_TTL_SECONDS)
+        if cached is not None:
+            return cached
+
+    async with httpx.AsyncClient(timeout=60.0) as client:
         account = await _get_json(client, f"/v1/account/{name}/{tag}")
         mmr = await _get_json(client, f"/v3/mmr/{region}/{PLATFORM}/{name}/{tag}")
-        matches = await _get_json(client, f"/v3/matches/{region}/{name}/{tag}?size=10")
+        # One bigger competitive-only request feeds both the recent strip
+        # and the season K/D aggregation
+        matches = await _get_json(
+            client, f"/v3/matches/{region}/{name}/{tag}?size=100&mode=Competitive"
+        )
 
-    return {"account": account, "mmr": mmr, "matches": matches}
+    payloads = {"account": account, "mmr": mmr, "matches": matches}
+    cache.set(cache_key, payloads)
+    return payloads
+
+    payloads = {"account": account, "mmr": mmr, "matches": matches, "lifetime": lifetime}
+    cache.set(cache_key, payloads)
+    return payloads
+
+def _is_competitive(match: dict[str, Any]) -> bool:
+    """Keep only competitive matches (skip deathmatch, unrated, swiftplay...)."""
+    metadata = match.get("metadata") or {}
+    mode = (metadata.get("mode") or metadata.get("queue") or "").lower()
+    # If the field is missing entirely, give the match the benefit of the doubt
+    return not mode or mode == "competitive"
+
+def _find_own_entry(
+    match: dict[str, Any], puuid: str | None, name: str, tag: str
+) -> dict[str, Any] | None:
+    """Locate the requested player inside a match roster.
+
+    Tries puuid first (stable identifier), then exact name+tag, then a
+    case-insensitive name match. Supports both the v3 schema (all_players)
+    and the older one (allies/enemies with riot_id).
+    """
+    players = match.get("players") or {}
+    roster = players.get("all_players") or []
+    if not roster:
+        roster = (players.get("allies") or []) + (players.get("enemies") or [])
+
+    def entry_name_tag(p: dict[str, Any]) -> tuple[Any, Any]:
+        if p.get("name") is not None:
+            return p.get("name"), p.get("tag")
+        riot = p.get("riot_id") or {}
+        return riot.get("game_name"), riot.get("tag_line")
+
+    if puuid:
+        own = next((p for p in roster if p.get("puuid") == puuid), None)
+        if own is not None:
+            return own
+
+    own = next((p for p in roster if entry_name_tag(p) == (name, tag)), None)
+    if own is not None:
+        return own
+
+    return next(
+        (p for p in roster if (entry_name_tag(p)[0] or "").lower() == name.lower()),
+        None,
+    )
 
 
 def _parse_recent_matches(
-    payload: dict[str, Any], name: str, tag: str
+    payload: dict[str, Any], puuid: str | None, name: str, tag: str
 ) -> list[dict[str, Any]]:
     """Convert raw v3 matches into the simplified common match structure."""
     matches = payload.get("data") or []
     recent: list[dict[str, Any]] = []
 
     for match in matches:
-        metadata = match.get("metadata") or {}
-        teams = match.get("teams") or {}
-        all_players = (match.get("players") or {}).get("all_players") or []
-
-        # Locate the requested player inside the match roster
-        own = next(
-            (p for p in all_players if p.get("name") == name and p.get("tag") == tag),
-            None,
-        )
+        if not _is_competitive(match):
+            continue
+        own = _find_own_entry(match, puuid, name, tag)
         if own is None:
             continue
 
+        metadata = match.get("metadata") or {}
+        teams = match.get("teams") or {}
         own_team = (own.get("team") or "").lower()
         team_stats = teams.get(own_team) or {}
         stats = own.get("stats") or {}
@@ -103,14 +177,14 @@ def _parse_recent_matches(
 def parse_stats(payloads: dict[str, Any], name: str, tag: str) -> PlayerStats:
     """Map raw HenrikDev payloads into the common PlayerStats model."""
     account = payloads["account"].get("data")
+    name, tag = name.strip(), tag.strip()
     if not account:
         raise ValorantProviderError(
             f"Player '{name}#{tag}' not found (account endpoint returned no data)."
         )
 
-    # NOTE: HenrikDev can send explicit nulls ("data": null) on some failures.
-    # dict.get(key, default) only applies the default when the key is MISSING,
-    # so we use `or {}` / `or []` to also replace null values with empty ones.
+    puuid = account.get("puuid")
+
     mmr = payloads["mmr"].get("data") or {}
     current = mmr.get("current") or {}
     peak = mmr.get("peak") or {}
@@ -119,18 +193,54 @@ def parse_stats(payloads: dict[str, Any], name: str, tag: str) -> PlayerStats:
     current_rank = (current.get("tier") or {}).get("name") or "Unranked"
     peak_rank = (peak.get("tier") or {}).get("name") or "Unranked"
 
-    # Win rate comes from the most recent competitive season entry
+    # Current season stats (wins, games, season_id)
     season = seasonal[0] if seasonal else {}
+    season_id = (season.get("season") or {}).get("id")
     wins = season.get("wins") or 0
     games = season.get("games") or 0
     win_rate = round(wins / games * 100, 1) if games else 0.0
 
-    recent_matches = _parse_recent_matches(payloads["matches"], name, tag)
+        # Season identifiers can come in different formats depending on the
+    # endpoint (full UUID vs short code), so compare against all of them.
+    season_ids = {
+        (season.get("season") or {}).get("id"),
+        (season.get("season") or {}).get("short"),
+    }
+    season_ids.discard(None)
 
-    # K/D aggregated over the fetched recent matches (not career-wide yet)
-    kills = sum(m["kills"] for m in recent_matches)
-    deaths = sum(m["deaths"] for m in recent_matches)
-    kd_ratio = round(kills / deaths, 2) if deaths else 0.0
+    # Season K/D over the fetched competitive matches; if the season
+    # identifiers never match (API format quirks), fall back to all the
+    # fetched competitive matches so the card still shows a real K/D.
+    season_kills = 0
+    season_deaths = 0
+    fallback_kills = 0
+    fallback_deaths = 0
+    for match in payloads["matches"].get("data") or []:
+        if not _is_competitive(match):
+            continue
+        own = _find_own_entry(match, puuid, name, tag)
+        if own is None:
+            continue
+        stats = own.get("stats") or {}
+        kills = stats.get("kills", 0)
+        deaths = stats.get("deaths", 0)
+        fallback_kills += kills
+        fallback_deaths += deaths
+        if (match.get("metadata") or {}).get("season_id") in season_ids:
+            season_kills += kills
+            season_deaths += deaths
+
+    if season_deaths:
+        kd_ratio = round(season_kills / season_deaths, 2)
+        kd_scope = "SEASON"
+    elif fallback_deaths:
+        kd_ratio = round(fallback_kills / fallback_deaths, 2)
+        kd_scope = "RECENT"
+    else:
+        kd_ratio = 0.0
+        kd_scope = "RECENT"
+
+    recent_matches = _parse_recent_matches(payloads["matches"], puuid, name, tag)
 
     return PlayerStats(
         game="valorant",
@@ -142,9 +252,10 @@ def parse_stats(payloads: dict[str, Any], name: str, tag: str) -> PlayerStats:
         total_matches=games,
         wins=wins,
         win_rate=win_rate,
-        kills=kills,
-        deaths=deaths,
+        kills=season_kills,
+        deaths=season_deaths,
         kd_ratio=kd_ratio,
+        kd_scope=kd_scope,
         recent_matches=recent_matches,
         last_updated=datetime.now(),
     )

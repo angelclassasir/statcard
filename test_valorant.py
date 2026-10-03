@@ -16,8 +16,8 @@ from statcard.providers.valorant import (
 )
 
 # --- Edit these to your own account ---
-RIOT_NAME = "DavidNavey고인물"
-RIOT_TAG = "ntn"
+RIOT_NAME = "Horcus "
+RIOT_TAG = "1995"
 REGION = "eu"  # one of: eu, na, ap, kr, br, latam
 
 FIXTURES_DIR = Path("tests/fixtures")
@@ -57,7 +57,7 @@ async def main() -> None:
     print(f"Rank   : {stats.current_rank}  (peak: {stats.peak_rank})")
     print(f"Level  : {stats.level}")
     print(f"Season : {stats.wins}W / {stats.total_matches}G  ({stats.get_win_rate_display()})")
-    print(f"K/D    : {stats.kills}K / {stats.deaths}D  ({stats.get_kd_display()}) [recent]")
+    print(f"K/D    : {stats.kills}K / {stats.deaths}D  ({stats.get_kd_display()}) [{stats.kd_scope.lower()}]")
     print("-" * 52)
     for i, match in enumerate(stats.recent_matches, 1):
         result = "WIN " if match["won"] else "LOSS" if match["won"] is False else "????"

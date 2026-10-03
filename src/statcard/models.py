@@ -31,6 +31,7 @@ class PlayerStats(BaseModel):
     kills: int = Field(0, description="Total kills")
     deaths: int = Field(0, description="Total deaths")
     kd_ratio: float = Field(0.0, description="Kill/Death ratio")
+    kd_scope: str = Field("RECENT", description="What the K/D ratio covers (SEASON or RECENT)")
 
     # Recent matches (simplified)
     recent_matches: list[dict] = Field(

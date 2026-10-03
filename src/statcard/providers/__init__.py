@@ -1,0 +1,1 @@
+"""Stat providers for each supported game."""

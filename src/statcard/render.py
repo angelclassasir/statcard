@@ -103,7 +103,7 @@ def _draw_stats_row(draw: ImageDraw.ImageDraw, stats: PlayerStats) -> None:
     """Draw the three big stat blocks separated by vertical lines."""
     losses = max(stats.total_matches - stats.wins, 0)
     blocks = [
-        (stats.get_kd_display(), "K/D RATIO (RECENT)"),
+        (stats.get_kd_display(), f"K/D RATIO ({stats.kd_scope})"),
         (stats.get_win_rate_display(), "WIN RATE"),
         (f"{stats.wins}W - {losses}L", "SEASON RECORD"),
     ]

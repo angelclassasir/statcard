@@ -1,18 +1,18 @@
 {
   "status": 200,
   "data": {
-    "puuid": "048692a8-d1a2-5070-83a8-3efe102984ae",
+    "puuid": "a70264aa-e826-55bb-8508-35948a38ea44",
     "region": "eu",
-    "account_level": 362,
-    "name": "DavidNavey고인물",
-    "tag": "ntn",
+    "account_level": 1375,
+    "name": "Horcus",
+    "tag": "1995",
     "card": {
-      "small": "https://media.valorant-api.com/playercards/9ef2f845-4ab5-2350-ea38-0795bb21ed05/smallart.png",
-      "large": "https://media.valorant-api.com/playercards/9ef2f845-4ab5-2350-ea38-0795bb21ed05/largeart.png",
-      "wide": "https://media.valorant-api.com/playercards/9ef2f845-4ab5-2350-ea38-0795bb21ed05/wideart.png",
-      "id": "9ef2f845-4ab5-2350-ea38-0795bb21ed05"
+      "small": "https://media.valorant-api.com/playercards/2ee6d025-4aac-3a67-0f6e-dba827acc75f/smallart.png",
+      "large": "https://media.valorant-api.com/playercards/2ee6d025-4aac-3a67-0f6e-dba827acc75f/largeart.png",
+      "wide": "https://media.valorant-api.com/playercards/2ee6d025-4aac-3a67-0f6e-dba827acc75f/wideart.png",
+      "id": "2ee6d025-4aac-3a67-0f6e-dba827acc75f"
     },
-    "last_update": "23 minutes ago",
-    "last_update_raw": 1791039212
+    "last_update": "7 minutes ago",
+    "last_update_raw": 1791061239
   }
 }
