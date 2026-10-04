@@ -51,29 +51,24 @@
 | Linting y formateo | `ruff` |
 | Chequeo de tipos | `pyrefly` |
 
-## 🗺️ Hoja de ruta
-
 ## 🗺️ Roadmap
 
-### Versión actual: v1 (Valorant)
-- ✅ Integración de la API de HenrikDev
-- ✅ K/D de la temporada con datos de las partidas recientes como alternativa
-- ✅ Compatibilidad con múltiples alfabetos (latino, CJK, cirílico)
-- ✅ Conjunto de pruebas sin conexión
-- ✅ CLI con argparse
+### v1 — CLI de Valorant (publicado ✅)
+- Provider HenrikDev con K/D de temporada (fallback SEASON/RECENT)
+- Fuentes multialfabeto (latín, tailandés, CJK, cirílico)
+- Paginación de partidas para K/D exacto de temporada completa
+- Auto-detección de región
+- Caché en disco, CLI con argparse, suite de tests offline
 
-### Próxima versión: v2 — Aplicación web
-- **Infraestructura:** Implementación del backend de FastAPI en Railway (nivel gratuito, 24/7)
-- **Frontend:** Cloudflare Pages (estático, ilimitado)
-- **Caché compartida:** caché respaldada por disco en Railway (TTL de 10 minutos, compartida entre usuarios)
-- **Punto final de la API:** `GET /api/valorant/{name}/{tag}?region=eu`
-- **Limitación de tasa:** restricción por IP para proteger la clave API de HenrikDev
+### v2 — Aplicación web pública (en progreso 🚧)
+- Backend FastAPI en Railway (tier gratuito, objetivo 24/7)
+- Frontend HTML/JS vanilla en Cloudflare Pages
+- Caché compartida por jugador (TTL 1 h) + rate limit 3 req/min por visitante
+- Documento de diseño: [`docs/INFRASTRUCTURE.md`](docs/INFRASTRUCTURE.md)
 
-### Futuro: v3 — CS2 + más juegos
-- **Proveedor de CS2:** API de datos de FACEIT (requiere KYC) o Leetify (requiere el consentimiento del jugador)
-- **Bot de Discord:** comando `/stats` que reutiliza los proveedores existentes
-- **Paginación de partidas:** Obtener el K/D de toda la temporada para jugadores con más de 100 partidas
-- **Detección automática de región:** Probar con `eu`/`na`/`ap`/`kr` hasta que el punto final de partidas devuelva datos
+### v3 — Más juegos e integraciones (planificado 📋)
+- Provider CS2 (FACEIT Data API vs Leetify — fuente por decidir)
+- Bot de Discord (`/stats`) reutilizando providers
 
 > **Sobre CS2:** Valve no expone una API pública para las estadísticas competitivas de CS2. Las alternativas o requieren verificación de identidad (FACEIT Data API) o dependen de que el jugador use un servicio de análisis de terceros (Leetify). El soporte de CS2 llegará en la v3, una vez elegida la fuente de datos.
 

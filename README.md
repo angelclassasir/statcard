@@ -47,25 +47,23 @@
 
 ## 🗺️ Roadmap
 
-### Current: v1 (Valorant)
-- ✅ HenrikDev API integration
-- ✅ Season K/D with fallback to recent matches
-- ✅ Multi-script font support (Latin, CJK, Cyrillic)
-- ✅ Offline test suite
-- ✅ CLI with argparse
+### v1 — Valorant CLI (shipped ✅)
+- HenrikDev provider with season K/D (SEASON/RECENT fallback)
+- Multi-script fonts (Latin, Thai, CJK, Cyrillic)
+- Match pagination for exact full-season K/D
+- Auto region detection
+- Disk cache, argparse CLI, offline test suite
 
-### Next: v2 — Web App
-- **Infrastructure:** Deploy FastAPI backend on Railway (free tier, 24/7)
-- **Frontend:** Cloudflare Pages (static, unlimited)
-- **Shared cache:** Disk-backed cache on Railway (TTL 10mins, shared across users)
-- **API endpoint:** `GET /api/valorant/{name}/{tag}?region=eu`
-- **Rate limiting:** Per-IP throttling to protect HenrikDev API key
+### v2 — Public web app (in progress 🚧)
+- FastAPI backend on Railway (free tier, 24/7 target)
+- Vanilla HTML/JS frontend on Cloudflare Pages
+- Shared per-player cache (1 h TTL) + rate limit 3 req/min per visitor
+- Design doc: [`docs/INFRASTRUCTURE.md`](docs/INFRASTRUCTURE.md)
 
-### Future: v3 — CS2 + More Games
-- **CS2 provider:** FACEIT Data API (requires KYC) or Leetify (requires player opt-in)
-- **Discord bot:** `/stats` command reusing existing providers
-- **Match pagination:** Fetch full season K/D for players with >100 matches
-- **Auto-region detection:** Try `eu`/`na`/`ap`/`kr` until matches endpoint returns data
+### v3 — More games & integrations (planned 📋)
+- CS2 provider (FACEIT Data API vs Leetify — source TBD)
+- Discord bot (`/stats`) reusing providers
+
 
 > **About CS2:** Valve does not expose a public API for CS2 competitive stats. The alternatives either require identity verification (FACEIT Data API) or depend on the player using a third-party analytics service (Leetify). CS2 support will land in v3 once the data source is chosen.
 
