@@ -29,7 +29,6 @@ FONT_SUBTITLE = FONTS_DIR / "ChakraPetch-SemiBold.ttf"
 FONT_BODY = FONTS_DIR / "ChakraPetch-Regular.ttf"
 
 # Fallback fonts for non-Latin player names (downloaded locally, git-ignored)
-# Fallback fonts for non-Latin player names (downloaded locally, git-ignored)
 FONT_FALLBACKS = {
     "kr": FONTS_DIR / "NotoSansKR.ttf",        # Hangul (Korean)
     "jp": FONTS_DIR / "NotoSansJP.ttf",        # Kana + kanji (Japanese)
