@@ -21,8 +21,7 @@ StatCard fetches your stats from **Valorant**, unifies them into a common format
 
 ## Screenshot
 
-[CAPTURA DE LA WEB]
-<!-- Replace the line above with: ![StatCard web app](docs/images/web-screenshot.png) -->
+![StatCard web app](examples/example_web.png)
 
 ## Example card
 
@@ -43,7 +42,7 @@ StatCard fetches your stats from **Valorant**, unifies them into a common format
 
 ## How it works
 
-```
+```text
 Browser ──► Cloudflare Pages (static frontend, vanilla HTML/JS/CSS)
                 │  fetch
                 ▼
@@ -176,7 +175,9 @@ The suite is fully offline: it runs against saved API fixtures.
 The project uses fonts under the SIL Open Font License:
 
 - **Chakra Petch** (Latin + Thai): bundled with the repo.
-- **Noto Sans KR / JP / SC + Noto Sans** (CJK + Cyrillic fallbacks): heavy (~40 MB total), so they are downloaded locally and git-ignored. See [`assets/fonts/README.md`](assets/fonts/README.md) for the download commands.
+- **Noto Sans KR / JP / SC + Noto Sans** (CJK + Cyrillic fallbacks): heavy (~40 MB total), so they are downloaded locally and git-ignored. Run `uv run python scripts/fetch_noto_fonts.py` to download them (also runs automatically in Render builds). 
+
+See [`assets/fonts/README.md`](assets/fonts/README.md) for manual download commands.
 
 ## Project structure
 
@@ -211,7 +212,8 @@ statcard/
 ├── tests/                     # pytest suite (offline, saved fixtures)
 ├── scripts/
 │   ├── smoke_valorant.py      # Manual live-API check
-│   └── render_social.py       # Generates the 1200×630 OG image
+│   ├── render_social.py       # Generates the 1200×630 OG image
+│   └── fetch_noto_fonts.py    # Downloads git-ignored Noto fallback fonts
 ├── docs/
 │   ├── INFRASTRUCTURE.md      # v2 web app design doc
 │   └── images/                # README screenshots

@@ -21,8 +21,7 @@ StatCard obtiene tus estadísticas de **Valorant**, las unifica en un formato co
 
 ## Captura
 
-[CAPTURA DE LA WEB]
-<!-- Sustituye la línea de arriba por: ![Aplicación web de StatCard](docs/images/web-screenshot.png) -->
+![Aplicación web de StatCard](examples/example_web.png)
 
 ## Tarjeta de ejemplo
 
@@ -43,7 +42,7 @@ StatCard obtiene tus estadísticas de **Valorant**, las unifica en un formato co
 
 ## Cómo funciona
 
-```
+```text
 Navegador ──► Cloudflare Pages (frontend estático, HTML/JS/CSS puro)
                 │  fetch
                 ▼
@@ -176,7 +175,9 @@ La suite funciona sin conexión: usa respuestas de la API guardadas.
 El proyecto usa fuentes con licencia SIL Open Font License:
 
 - **Chakra Petch** (latino + tailandés): incluida en el repositorio.
-- **Noto Sans KR / JP / SC + Noto Sans** (alternativas para CJK y cirílico): pesan mucho (~40 MB en total), así que se descargan en local y están excluidas de git. Los comandos de descarga están en [`assets/fonts/README.md`](assets/fonts/README.md).
+- **Noto Sans KR / JP / SC + Noto Sans** (CJK + Cyrillic fallbacks): pesan mucho (~40 MB total), así que se descargan en local y están excluidas de git. Ejecuta `uv run python scripts/fetch_noto_fonts.py` para descargarlas (también se ejecutan automáticamente en las compilaciones de Render). 
+
+Consulta [`assets/fonts/README.md`](assets/fonts/README.md) para ver los comandos de descarga manual.
 
 ## Estructura del proyecto
 
@@ -212,6 +213,7 @@ statcard/
 ├── scripts/
 │   ├── smoke_valorant.py      # Comprobación manual contra la API real
 │   └── render_social.py       # Genera la imagen OG de 1200×630
+│   └── fetch_noto_fonts.py    # Descarga fuentes de reserva Noto que no están en git
 ├── docs/
 │   ├── INFRASTRUCTURE.md      # Documento de diseño de la v2
 │   └── images/                # Capturas del README

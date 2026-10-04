@@ -113,8 +113,10 @@ Error mapping (provider errors → HTTP):
 ## 9. Hosting plan (free, 24/7 target)
 
 Primary — Render free web service + UptimeRobot pinger:
-- Runtime Python 3. Build: `pip install uv && uv sync --frozen --no-dev`.
+- Runtime Python 3. Build: `pip install uv && uv sync --frozen --no-dev && python scripts/fetch_noto_fonts.py`.
   Start: `uv run uvicorn statcard.web.app:app --host 0.0.0.0 --port $PORT`.
+- Noto fallback fonts (git-ignored, ~25 MB) are downloaded at build time; a failed
+  download degrades gracefully (boxes) instead of failing the build.
 - Free instances spin down after 15 min of inactivity; an UptimeRobot HTTP
   monitor hits `/healthz` every 5 min so the service never sleeps. Cold start
   (~30-50 s) only right after deploys.
