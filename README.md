@@ -48,22 +48,30 @@
 ## 🗺️ Roadmap
 
 ### v1 — Valorant CLI (shipped ✅)
+
 - HenrikDev provider with season K/D (SEASON/RECENT fallback)
 - Multi-script fonts (Latin, Thai, CJK, Cyrillic)
-- Match pagination for exact full-season K/D
-- Auto region detection
-- Disk cache, argparse CLI, offline test suite
+- Disk cache (10 min TTL), argparse CLI, offline test suite
+- Dual license (PolyForm NC + commercial on request)
 
-### v2 — Public web app (in progress 🚧)
-- FastAPI backend on Railway (free tier, 24/7 target)
-- Vanilla HTML/JS frontend on Cloudflare Pages
-- Shared per-player cache (1 h TTL) + rate limit 3 req/min per visitor
+### v2 — Public web app (implemented locally 🚧, deploy pending)
+
+- FastAPI backend at `src/statcard/web/`
+  - Endpoints: `/healthz`, `/api/valorant/{riot_id}` (PNG), `/api/valorant/{riot_id}/json`
+  - Sliding-window rate limit (3/min per IP + 20/min global)
+  - Shared disk cache (1 h TTL)
+- Vanilla HTML/JS/CSS frontend at `frontend/`
+  - Form with Riot ID validation + region selector
+  - Live preview + PNG download
+- **Pending:** deploy to Railway (backend) + Cloudflare Pages (frontend)
 - Design doc: [`docs/INFRASTRUCTURE.md`](docs/INFRASTRUCTURE.md)
 
 ### v3 — More games & integrations (planned 📋)
+
 - CS2 provider (FACEIT Data API vs Leetify — source TBD)
 - Discord bot (`/stats`) reusing providers
-
+- Match pagination for exact full-season K/D
+- Auto region detection (try `eu`/`na`/`ap`/`kr` until data is returned)
 
 > **About CS2:** Valve does not expose a public API for CS2 competitive stats. The alternatives either require identity verification (FACEIT Data API) or depend on the player using a third-party analytics service (Leetify). CS2 support will land in v3 once the data source is chosen.
 
@@ -92,10 +100,31 @@ cp .env.example .env
 ### Usage
 
 ```bash
-# Valorant
+# Generate a Valorant card
 python -m statcard valorant "YourName#YourTag"
+
+# Force a fresh fetch (skip cache)
+python -m statcard valorant "YourName#YourTag" --no-cache
+
+# Specify a different region
+python -m statcard valorant "YourName#YourTag" --region na
 ```
 Output images are saved to output/.
+
+### Running the web app locally
+Open two terminals in the repo root:
+
+```bash
+# Terminal 1: start the FastAPI backend
+uv run uvicorn statcard.web.app:app --port 8000
+
+# Terminal 2: serve the static frontend
+cd frontend
+uv run python -m http.server 8080
+```
+Then open http://127.0.0.1:8080 in your browser. The frontend will hit the local backend at http://127.0.0.1:8000.
+
+💡 FastAPI also serves an auto-generated Swagger UI at http://127.0.0.1:8000/docs
 
 ## Fonts
 The project uses fonts under the SIL Open Font License:
@@ -112,24 +141,38 @@ statcard/
 │   ├── __main__.py            # CLI entry point (argparse)
 │   ├── models.py              # Common stat format (pydantic)
 │   ├── cache.py               # Disk cache with expiration
-│   ├── render.py               # Card rendering (Pillow)
+│   ├── render.py              # Card rendering (Pillow)
 │   ├── providers/
 │   │   ├── __init__.py
 │   │   └── valorant.py        # HenrikDev -> common format
-│   └── themes/
-│       ├── __init__.py
-│       └── dark.py            # Colors, fonts, sizes
+│   ├── themes/
+│   │   ├── __init__.py
+│   │   └── dark.py            # Colors, fonts, sizes
+│   └── web/                   # FastAPI backend (v2)
+│       ├── app.py             # App factory + CORS + /healthz
+│       ├── api.py             # /api/valorant routes (PNG + JSON)
+│       ├── ratelimit.py       # Sliding-window limiter (per-IP + global)
+│       └── settings.py        # Environment-driven config
+├── frontend/                  # Vanilla HTML/JS/CSS web app (v2)
+│   ├── index.html
+│   ├── app.js
+│   ├── config.js              # Backend URL (edited once after deploy)
+│   └── styles.css
 ├── assets/
 │   └── fonts/                 # SIL OFL fonts (see assets/fonts/README.md)
 ├── tests/
 │   ├── fixtures/              # Saved API responses for offline testing
 │   ├── test_valorant.py
 │   ├── test_cache.py
-│   └── test_cli.py
+│   ├── test_cli.py
+│   └── test_web.py            # FastAPI TestClient tests (offline)
 ├── scripts/
 │   └── smoke_valorant.py      # Manual live-API check (Horcus#1995)
+├── docs/
+│   └── INFRASTRUCTURE.md      # v2 web app design doc
 ├── examples/                  # Sample cards for this README
-├── output/                  # Generated cards (git-ignored)
+├── output/                    # Generated cards (git-ignored)
+├── .cache/                    # API payload cache (git-ignored)
 ├── .env.example               # Template for API keys
 └── pyproject.toml
 ```

@@ -51,26 +51,36 @@
 | Linting y formateo | `ruff` |
 | Chequeo de tipos | `pyrefly` |
 
-## 🗺️ Roadmap
+## 🗺️ Hoja de ruta
 
-### v1 — CLI de Valorant (publicado ✅)
+### v1 — CLI de Valorant (publicada ✅)
+
 - Provider HenrikDev con K/D de temporada (fallback SEASON/RECENT)
 - Fuentes multialfabeto (latín, tailandés, CJK, cirílico)
-- Paginación de partidas para K/D exacto de temporada completa
-- Auto-detección de región
-- Caché en disco, CLI con argparse, suite de tests offline
+- Caché en disco (TTL 10 min), CLI con argparse, suite de tests offline
+- Licencia dual (PolyForm NC + comercial bajo autorización)
 
-### v2 — Aplicación web pública (en progreso 🚧)
-- Backend FastAPI en Railway (tier gratuito, objetivo 24/7)
-- Frontend HTML/JS vanilla en Cloudflare Pages
-- Caché compartida por jugador (TTL 1 h) + rate limit 3 req/min por visitante
+### v2 — Aplicación web pública (implementada localmente 🚧, deploy pendiente)
+
+- Backend FastAPI en `src/statcard/web/`
+  - Endpoints: `/healthz`, `/api/valorant/{riot_id}` (PNG), `/api/valorant/{riot_id}/json`
+  - Rate limit con ventana deslizante (3/min por IP + 20/min global)
+  - Caché compartida en disco (TTL 1 h)
+- Frontend HTML/JS/CSS vanilla en `frontend/`
+  - Formulario con validación de Riot ID + selector de región
+  - Preview en vivo + descarga PNG
+- **Pendiente:** deploy a Railway (backend) + Cloudflare Pages (frontend)
 - Documento de diseño: [`docs/INFRASTRUCTURE.md`](docs/INFRASTRUCTURE.md)
 
 ### v3 — Más juegos e integraciones (planificado 📋)
+
 - Provider CS2 (FACEIT Data API vs Leetify — fuente por decidir)
 - Bot de Discord (`/stats`) reutilizando providers
+- Paginación de partidas para K/D exacto de temporada completa
+- Auto-detección de región (probar `eu`/`na`/`ap`/`kr` hasta obtener datos)
 
 > **Sobre CS2:** Valve no expone una API pública para las estadísticas competitivas de CS2. Las alternativas o requieren verificación de identidad (FACEIT Data API) o dependen de que el jugador use un servicio de análisis de terceros (Leetify). El soporte de CS2 llegará en la v3, una vez elegida la fuente de datos.
+
 
 ## 🚀 Primeros pasos
 
@@ -100,8 +110,30 @@ cp .env.example .env
 ```bash
 # Genera tu tarjeta de Valorant
 python -m statcard valorant "TuNombre#TuTag"
+
+# Fuerza una consulta fresca (sin usar caché)
+python -m statcard valorant "TuNombre#TuTag" --no-cache
+
+# Especifica una región distinta
+python -m statcard valorant "TuNombre#TuTag" --region na
 ```
 Las imágenes de salida se guardan en output/.
+
+### Ejecutar la aplicación web localmente
+Abre dos terminales en la raíz del repositorio:
+
+```bash
+# Terminal 1: arranca el backend FastAPI
+uv run uvicorn statcard.web.app:app --port 8000
+
+# Terminal 2: sirve el frontend estático
+cd frontend
+uv run python -m http.server 8080
+```
+
+Luego abre http://127.0.0.1:8080 en tu navegador. El frontend consultará al backend local en http://127.0.0.1:8000.
+
+💡 FastAPI también sirve una Swagger UI auto-generada en http://127.0.0.1:8000/docs.
 
 ## Fuentes
 El proyecto usa fuentes bajo la licencia SIL Open Font License:
@@ -114,22 +146,43 @@ El proyecto usa fuentes bajo la licencia SIL Open Font License:
 ```text
 statcard/
 ├── src/statcard/
-│   ├── __main__.py       # Punto de entrada del CLI
-│   ├── models.py         # Formato común de estadísticas (pydantic)
-│   ├── cache.py          # Caché en disco con caducidad
-│   ├── render.py         # Renderizado de tarjetas (Pillow)
+│   ├── __init__.py
+│   ├── __main__.py            # Punto de entrada del CLI
+│   ├── models.py              # Formato común de estadísticas (pydantic)
+│   ├── cache.py               # Caché en disco con caducidad
+│   ├── render.py              # Renderizado de tarjetas (Pillow)
 │   ├── providers/
-│   │   └── valorant.py   # HenrikDev -> formato común
-│   └── themes/
-│       └── dark.py       # Colores, fuentes, tamaños
+│   │   ├── __init__.py
+│   │   └── valorant.py        # HenrikDev -> formato común
+│   ├── themes/
+│   │   ├── __init__.py
+│   │   └── dark.py            # Colores, fuentes, tamaños
+│   └── web/                   # Backend FastAPI (v2)
+│       ├── app.py             # Fábrica de app + CORS + /healthz
+│       ├── api.py             # Rutas /api/valorant (PNG + JSON)
+│       ├── ratelimit.py       # Limitador con ventana deslizante (por IP + global)
+│       └── settings.py        # Configuración por variables de entorno
+├── frontend/                  # Web app HTML/JS/CSS vanilla (v2)
+│   ├── index.html
+│   ├── app.js
+│   ├── config.js              # URL del backend (editada una vez tras el deploy)
+│   └── styles.css
 ├── assets/
-│   └── fonts/            # Fuentes SIL OFL (ver assets/fonts/README.md)
+│   └── fonts/                 # Fuentes SIL OFL (ver assets/fonts/README.md)
 ├── tests/
-│   ├── fixtures/         # Respuestas guardadas de las APIs para tests offline
-│   └── test_*.py
-├── examples/             # Tarjetas de ejemplo para este README
-├── output/               # Tarjetas generadas (ignorado por git)
-├── .env.example          # Plantilla para las claves de API
+│   ├── fixtures/              # Respuestas guardadas de las APIs para tests offline
+│   ├── test_valorant.py
+│   ├── test_cache.py
+│   ├── test_cli.py
+│   └── test_web.py            # Tests de FastAPI con TestClient (offline)
+├── scripts/
+│   └── smoke_valorant.py      # Verificación manual contra API real (Horcus#1995)
+├── docs/
+│   └── INFRASTRUCTURE.md      # Documento de diseño de la v2
+├── examples/                  # Tarjetas de ejemplo para este README
+├── output/                    # Tarjetas generadas (ignorado por git)
+├── .cache/                    # Caché de respuestas API (ignorado por git)
+├── .env.example               # Plantilla para las claves de API
 └── pyproject.toml
 ```
 
