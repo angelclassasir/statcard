@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>statcard — Valorant stat cards</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <header>
+        <h1>stat<span>card</span></h1>
+        <p class="subtitle">Visual stat cards for your Valorant matches.</p>
+    </header>
+
+    <main class="container">
+        <form class="card-form" id="card-form" novalidate>
+            <div class="field">
+                <label for="riot-id">Riot ID</label>
+                <input id="riot-id" name="riot-id" type="text" placeholder="Name#TAG" autocomplete="off" required />
+            </div>
+
+            <div class="field">
+                <label for="region">Region</label>
+                <select id="region" name="region">
+                    <option value="eu" selected>EU</option>
+                    <option value="na">NA</option>
+                    <option value="ap">AP</option>
+                    <option value="kr">KR</option>
+                    <option value="br">BR</option>
+                    <option value="latam">LATAM</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>&nbsp;</label>
+                <button type="submit" id="submit-btn">Generate</button>
+            </div>
+
+            <div class="field">
+                <label>&nbsp;</label>
+                <a id="download-link" hidden class="download-link" href="">⬇ Save PNG</a>
+            </div>
+        </form>
+
+        <div class="preview">
+            <div id="status" class="status" role="status" aria-live="polite"></div>
+            <img id="preview" hidden alt="Generated stat card" />
+        </div>
+    </main>
+
+    <footer>
+        Stats via HenrikDev API · Built by
+        <a href="https://github.com/angelclassasir" target="_blank" rel="noopener">angelclassasir</a>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

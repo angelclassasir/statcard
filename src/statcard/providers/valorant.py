@@ -24,6 +24,16 @@ PLATFORM = "pc"
 class ValorantProviderError(Exception):
     """Raised when the API returns unexpected or missing data."""
 
+class ValorantAuthError(ValorantProviderError):
+    """HenrikDev rejected the API key (401)."""
+
+
+class ValorantNotFoundError(ValorantProviderError):
+    """The requested player does not exist (404)."""
+
+
+class ValorantRateLimitedError(ValorantProviderError):
+    """HenrikDev rate-limited us (429)."""
 
 def _auth_headers() -> dict[str, str]:
     """Return authorization headers, failing early if the key is missing."""
@@ -62,9 +72,13 @@ async def _get_json(client: httpx.AsyncClient, path: str) -> dict[str, Any]:
 CACHE_TTL_SECONDS = 10 * 60
 
 async def fetch_raw_payloads(
-    name: str, tag: str, region: str = "eu", use_cache: bool = True
+    name: str,
+    tag: str,
+    region: str = "eu",
+    use_cache: bool = True,
+    cache_ttl_seconds: int | None = None,
 ) -> dict[str, Any]:
-    """Fetch raw JSON payloads (account, MMR, matches, lifetime) with disk cache."""
+    """Fetch raw JSON payloads (account, MMR, matches) with disk cache."""
     name, tag = name.strip(), tag.strip()
 
     if region not in VALID_REGIONS:
@@ -73,16 +87,15 @@ async def fetch_raw_payloads(
         )
 
     cache_key = f"valorant:{region}:{name.lower()}#{tag.lower()}"
+    ttl = CACHE_TTL_SECONDS if cache_ttl_seconds is None else cache_ttl_seconds
     if use_cache:
-        cached = cache.get(cache_key, CACHE_TTL_SECONDS)
+        cached = cache.get(cache_key, ttl)
         if cached is not None:
             return cached
 
     async with httpx.AsyncClient(timeout=60.0) as client:
         account = await _get_json(client, f"/v1/account/{name}/{tag}")
         mmr = await _get_json(client, f"/v3/mmr/{region}/{PLATFORM}/{name}/{tag}")
-        # One bigger competitive-only request feeds both the recent strip
-        # and the season K/D aggregation
         matches = await _get_json(
             client, f"/v3/matches/{region}/{name}/{tag}?size=100&mode=Competitive"
         )
@@ -175,7 +188,7 @@ def parse_stats(payloads: dict[str, Any], name: str, tag: str) -> PlayerStats:
     account = payloads["account"].get("data")
     name, tag = name.strip(), tag.strip()
     if not account:
-        raise ValorantProviderError(
+        raise ValorantNotFoundError(
             f"Player '{name}#{tag}' not found (account endpoint returned no data)."
         )
 
@@ -257,8 +270,18 @@ def parse_stats(payloads: dict[str, Any], name: str, tag: str) -> PlayerStats:
 
 
 async def fetch_valorant_stats(
-    name: str, tag: str, region: str = "eu", use_cache: bool = True
+    name: str,
+    tag: str,
+    region: str = "eu",
+    use_cache: bool = True,
+    cache_ttl_seconds: int | None = None,
 ) -> PlayerStats:
     """Public entry point: fetch and parse Valorant stats for one player."""
-    payloads = await fetch_raw_payloads(name, tag, region=region, use_cache=use_cache)
+    payloads = await fetch_raw_payloads(
+        name,
+        tag,
+        region=region,
+        use_cache=use_cache,
+        cache_ttl_seconds=cache_ttl_seconds,
+    )
     return parse_stats(payloads, name, tag)
