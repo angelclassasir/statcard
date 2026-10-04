@@ -67,18 +67,17 @@
 - Production: backend on Render free tier (keep-awake pinger) + frontend on Cloudflare Pages → [statcard.pages.dev](https://statcard.pages.dev)
 - Design doc: [`docs/INFRASTRUCTURE.md`](docs/INFRASTRUCTURE.md)
 
-### v2.1 — Web quality, polish & game selector (in progress 🚧)
+### v2.1 — Web quality, polish & game selector (shipped ✅)
 
-- **Game selector**: "pick your game" header with official logos — Valorant (live) and CS2 (disabled, "coming in v3" badge)
-- **Technical base**: HTTPS everywhere, correct `lang` / `charset` / `viewport`, real-device mobile testing
-- **SEO & identity**: unique `<title>`, meta description, canonical link, real SVG favicon, single `<h1>`, clean URLs, `robots.txt` + `sitemap.xml` + custom `404.html`, Google Search Console submission
+- **Game selector** with official logos: Valorant live, CS2 disabled with a "v3" badge
+- **SEO & identity**: unique title, meta description, canonical, SVG favicon, `robots.txt`, `sitemap.xml`, themed `404.html`
 - **Social sharing**: Open Graph + `twitter:card = summary_large_image` with a 1200×630 preview rendered by our own Pillow pipeline
-- **Performance**: self-hosted WOFF2 fonts (no Google Fonts), WebP/AVIF images with explicit dimensions, zero unused libraries, Lighthouse green on performance + accessibility
-- **Accessibility**: contrast ≥ 4.5:1, skip-to-content link, visible keyboard focus, labeled form fields, `alt` on every image, `prefers-reduced-motion` respected
-- **Security**: `_headers` file with `X-Content-Type-Options`, `Referrer-Policy` and a basic CSP; no secrets in browser code (the API key lives server-side); `rel="noopener"` on external links
-- **Legal & trust**: visible contact, privacy note (the Riot ID is sent to the HenrikDev API and never stored), Riot non-affiliation disclaimer, no cookies → no banner needed; optional cookieless analytics (Cloudflare Web Analytics)
-- **UX polish**: hero glow + sample-card showcase, loading skeleton, card entrance animation, region pills, visual countdown on 429, richer error states
-- **Optional / later**: ES/EN switch with `hreflang`, JSON-LD `SoftwareApplication`, custom domain, `security.txt`
+- **Performance**: self-hosted WOFF2 fonts (no CDNs), lazy-loaded images with explicit dimensions, zero JS dependencies
+- **Accessibility**: contrast ≥ 4.5:1, skip-to-content link, visible keyboard focus, labeled fields, `alt` texts, `prefers-reduced-motion` respected
+- **Security**: `_headers` with CSP, `X-Content-Type-Options`, `Referrer-Policy`; immutable font caching; API key never leaves the server
+- **UX polish**: hero glow, sample-card showcase, loading skeleton, card entrance animation, region pills, visual countdown on 429
+- **Trust**: privacy note (Riot ID sent to HenrikDev, cached ≤ 1 h, no cookies), trademark notices, contact links
+
 
 ### v3 — More games & integrations (planned 📋)
 
@@ -167,13 +166,25 @@ statcard/
 │       ├── api.py             # /api/valorant routes (PNG + JSON)
 │       ├── ratelimit.py       # Sliding-window limiter (per-IP + global)
 │       └── settings.py        # Environment-driven config
-├── frontend/                  # Vanilla HTML/JS/CSS web app (v2)
-│   ├── index.html
-│   ├── app.js
-│   ├── config.js              # Backend URL (edited once after deploy)
-│   └── styles.css
+├── frontend/                  # Static web app (v2/v2.1) → Cloudflare Pages
+│   ├── index.html             # Game selector, form, preview, showcase
+│   ├── app.js                 # Fetch, validation, skeleton, 429 countdown
+│   ├── config.js              # Backend URL (Render)
+│   ├── styles.css             # Self-hosted WOFF2, glow, animations, a11y
+│   ├── 404.html               # Themed "PLAYER NOT FOUND" page
+│   ├── _headers               # CSP, nosniff, Referrer-Policy, cache rules
+│   ├── robots.txt             # Crawl rules + sitemap reference
+│   ├── sitemap.xml            # Single-page sitemap
+│   ├── favicon.svg            # statcard mark
+│   └── assets/
+│       ├── fonts/             # Chakra Petch WOFF2 (self-hosted)
+│       ├── logo-valorant.png  # Selector icon (third-party trademark)
+│       ├── logo-cs2.png       # Selector icon (third-party trademark, v3)
+│       ├── og-1200x630.png    # Social preview (scripts/render_social.py)
+│       ├── showcase-1.png     # Sample card: Horcus
+│       └── showcase-2.png     # Sample card: Mabi
 ├── assets/
-│   └── fonts/                 # SIL OFL fonts (see assets/fonts/README.md)
+│   └── fonts/                 # SIL OFL TTF sources (see assets/fonts/README.md)
 ├── tests/
 │   ├── fixtures/              # Saved API responses for offline testing
 │   ├── test_valorant.py
@@ -181,12 +192,12 @@ statcard/
 │   ├── test_cli.py
 │   └── test_web.py            # FastAPI TestClient tests (offline)
 ├── scripts/
-│   └── smoke_valorant.py      # Manual live-API check (Horcus#1995)
+│   ├── smoke_valorant.py      # Manual live-API check (Horcus#1995)
+│   └── render_social.py       # Generates frontend/assets/og-1200x630.png
 ├── docs/
 │   └── INFRASTRUCTURE.md      # v2 web app design doc
 ├── examples/                  # Sample cards for this README
 ├── output/                    # Generated cards (git-ignored)
-├── .cache/                    # API payload cache (git-ignored)
 ├── .env.example               # Template for API keys
 └── pyproject.toml
 ```

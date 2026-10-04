@@ -70,18 +70,17 @@
 - Producción: backend en Render free tier (pinger keep-awake) + frontend en Cloudflare Pages → [statcard.pages.dev](https://statcard.pages.dev)
 - Documento de diseño: [`docs/INFRASTRUCTURE.md`](docs/INFRASTRUCTURE.md)
 
-### v2.1 — Calidad web, pulido y selector de juego (en progreso 🚧)
+### v2.1 — Calidad web, pulido y selector de juego (publicada ✅)
 
-- **Selector de juego**: cabecera "elige tu juego" con los logos oficiales — Valorant (activo) y CS2 (deshabilitado con badge "llega en v3")
-- **Base técnica**: HTTPS en todo el sitio, `lang` / `charset` / `viewport` correctos, probado en móvil real
-- **SEO e identidad**: `<title>` único y descriptivo, meta description, canonical, favicon SVG real, un solo `<h1>`, URLs limpias, `robots.txt` + `sitemap.xml` + `404.html` personalizada, alta en Google Search Console
+- **Selector de juego** con los logos oficiales: Valorant activo, CS2 deshabilitado con badge "v3"
+- **SEO e identidad**: title único, meta description, canonical, favicon SVG, `robots.txt`, `sitemap.xml`, `404.html` temática
 - **Compartir en redes**: Open Graph + `twitter:card = summary_large_image` con preview de 1200×630 generada por nuestro propio pipeline de Pillow
-- **Rendimiento**: fuentes WOFF2 auto-alojadas (sin Google Fonts), imágenes WebP/AVIF con dimensiones explícitas, cero librerías sin usar, Lighthouse en verde en rendimiento + accesibilidad
-- **Accesibilidad**: contraste ≥ 4.5:1, enlace "saltar al contenido", foco visible al navegar con teclado, `<label>` en cada campo, `alt` en todas las imágenes, respeto por `prefers-reduced-motion`
-- **Seguridad**: archivo `_headers` con `X-Content-Type-Options`, `Referrer-Policy` y CSP básica; ningún secreto en el código del navegador (la clave vive en el servidor); `rel="noopener"` en enlaces externos
-- **Legal y confianza**: contacto visible, nota de privacidad (el Riot ID se envía a la API de HenrikDev y no se guarda), aviso de no afiliación con Riot, sin cookies → sin banner; analítica sin cookies opcional (Cloudflare Web Analytics)
-- **Pulido UX**: glow en el hero + showcase de tarjetas de ejemplo, skeleton de carga, animación de entrada de la tarjeta, pills de región, cuenta atrás visual en 429, estados de error más ricos
-- **Opcional / más adelante**: switch ES/EN con `hreflang`, JSON-LD `SoftwareApplication`, dominio propio, `security.txt`
+- **Rendimiento**: fuentes WOFF2 auto-alojadas (sin CDNs), imágenes lazy con dimensiones explícitas, cero dependencias JS
+- **Accesibilidad**: contraste ≥ 4.5:1, enlace "saltar al contenido", foco visible con teclado, labels en cada campo, textos `alt`, respeto por `prefers-reduced-motion`
+- **Seguridad**: `_headers` con CSP, `X-Content-Type-Options`, `Referrer-Policy`; caché inmutable para fuentes; la clave de API nunca sale del servidor
+- **Pulido UX**: glow en el hero, showcase de tarjetas de ejemplo, skeleton de carga, animación de entrada de la tarjeta, pills de región, cuenta atrás visual en 429
+- **Confianza**: nota de privacidad (el Riot ID se envía a HenrikDev, se cachea ≤ 1 h, sin cookies), avisos de marcas, enlaces de contacto
+
 
 ### v3 — Más juegos e integraciones (planificado 📋)
 
@@ -158,7 +157,7 @@ El proyecto usa fuentes bajo la licencia SIL Open Font License:
 statcard/
 ├── src/statcard/
 │   ├── __init__.py
-│   ├── __main__.py            # Punto de entrada del CLI
+│   ├── __main__.py            # Punto de entrada del CLI (argparse)
 │   ├── models.py              # Formato común de estadísticas (pydantic)
 │   ├── cache.py               # Caché en disco con caducidad
 │   ├── render.py              # Renderizado de tarjetas (Pillow)
@@ -173,13 +172,25 @@ statcard/
 │       ├── api.py             # Rutas /api/valorant (PNG + JSON)
 │       ├── ratelimit.py       # Limitador con ventana deslizante (por IP + global)
 │       └── settings.py        # Configuración por variables de entorno
-├── frontend/                  # Web app HTML/JS/CSS vanilla (v2)
-│   ├── index.html
-│   ├── app.js
-│   ├── config.js              # URL del backend (editada una vez tras el deploy)
-│   └── styles.css
+├── frontend/                  # Web app estática (v2/v2.1) → Cloudflare Pages
+│   ├── index.html             # Selector de juego, formulario, preview, showcase
+│   ├── app.js                 # Fetch, validación, skeleton, cuenta atrás 429
+│   ├── config.js              # URL del backend (Render)
+│   ├── styles.css             # WOFF2 auto-alojadas, glow, animaciones, a11y
+│   ├── 404.html               # Página "PLAYER NOT FOUND" temática
+│   ├── _headers               # CSP, nosniff, Referrer-Policy, reglas de caché
+│   ├── robots.txt             # Reglas de rastreo + referencia al sitemap
+│   ├── sitemap.xml            # Sitemap de una página
+│   ├── favicon.svg            # Marca de statcard
+│   └── assets/
+│       ├── fonts/             # Chakra Petch WOFF2 (auto-alojadas)
+│       ├── logo-valorant.png  # Icono del selector (marca de terceros)
+│       ├── logo-cs2.png       # Icono del selector (marca de terceros, v3)
+│       ├── og-1200x630.png    # Preview social (scripts/render_social.py)
+│       ├── showcase-1.png     # Tarjeta de ejemplo: Horcus
+│       └── showcase-2.png     # Tarjeta de ejemplo: Mabi
 ├── assets/
-│   └── fonts/                 # Fuentes SIL OFL (ver assets/fonts/README.md)
+│   └── fonts/                 # Fuentes SIL OFL en TTF (ver assets/fonts/README.md)
 ├── tests/
 │   ├── fixtures/              # Respuestas guardadas de las APIs para tests offline
 │   ├── test_valorant.py
@@ -187,12 +198,12 @@ statcard/
 │   ├── test_cli.py
 │   └── test_web.py            # Tests de FastAPI con TestClient (offline)
 ├── scripts/
-│   └── smoke_valorant.py      # Verificación manual contra API real (Horcus#1995)
+│   ├── smoke_valorant.py      # Verificación manual contra API real (Horcus#1995)
+│   └── render_social.py       # Genera frontend/assets/og-1200x630.png
 ├── docs/
 │   └── INFRASTRUCTURE.md      # Documento de diseño de la v2
 ├── examples/                  # Tarjetas de ejemplo para este README
 ├── output/                    # Tarjetas generadas (ignorado por git)
-├── .cache/                    # Caché de respuestas API (ignorado por git)
 ├── .env.example               # Plantilla para las claves de API
 └── pyproject.toml
 ```
