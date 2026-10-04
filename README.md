@@ -8,13 +8,18 @@
 
 **Language:** **English** | [Español](README.es.md)
 
+
 ---
 
 `statcard` fetches your stats from **Valorant**, unifies them into a common format, and renders them into a polished PNG card ready for Discord, social media, or your GitHub profile.
 
-> ⚠️ **Project Status:** v1 (Valorant) feature-complete — CLI polish and offline tests in progress. CS2 support is planned for v2 (see [Roadmap](#-roadmap)).
+> 🌐 **Live demo:** [statcard.pages.dev](https://statcard.pages.dev) — generate your card without installing anything.
+
+> ⚠️ **Project status:** v1 (Valorant CLI) and v2 (public web app) are shipped and in production. v2.1 (UI/UX aesthetic polish) is in progress. See [Roadmap](#-roadmap).
 
 ---
+
+
 
 ## ✨ Features
 
@@ -54,17 +59,26 @@
 - Disk cache (10 min TTL), argparse CLI, offline test suite
 - Dual license (PolyForm NC + commercial on request)
 
-### v2 — Public web app (implemented locally 🚧, deploy pending)
+### v2 — Public web app (shipped ✅)
 
-- FastAPI backend at `src/statcard/web/`
-  - Endpoints: `/healthz`, `/api/valorant/{riot_id}` (PNG), `/api/valorant/{riot_id}/json`
-  - Sliding-window rate limit (3/min per IP + 20/min global)
-  - Shared disk cache (1 h TTL)
-- Vanilla HTML/JS/CSS frontend at `frontend/`
-  - Form with Riot ID validation + region selector
-  - Live preview + PNG download
-- **Pending:** deploy to Railway (backend) + Cloudflare Pages (frontend)
+- FastAPI backend (`src/statcard/web/`): `/healthz`, `/api/valorant/{riot_id}` (PNG), `/api/valorant/{riot_id}/json`
+- Sliding-window rate limit (3/min per IP + 20/min global) + shared disk cache (1 h TTL)
+- Vanilla HTML/JS/CSS frontend (`frontend/`), no build step
+- Production: backend on Render free tier (keep-awake pinger) + frontend on Cloudflare Pages → [statcard.pages.dev](https://statcard.pages.dev)
 - Design doc: [`docs/INFRASTRUCTURE.md`](docs/INFRASTRUCTURE.md)
+
+### v2.1 — Web quality, polish & game selector (in progress 🚧)
+
+- **Game selector**: "pick your game" header with official logos — Valorant (live) and CS2 (disabled, "coming in v3" badge)
+- **Technical base**: HTTPS everywhere, correct `lang` / `charset` / `viewport`, real-device mobile testing
+- **SEO & identity**: unique `<title>`, meta description, canonical link, real SVG favicon, single `<h1>`, clean URLs, `robots.txt` + `sitemap.xml` + custom `404.html`, Google Search Console submission
+- **Social sharing**: Open Graph + `twitter:card = summary_large_image` with a 1200×630 preview rendered by our own Pillow pipeline
+- **Performance**: self-hosted WOFF2 fonts (no Google Fonts), WebP/AVIF images with explicit dimensions, zero unused libraries, Lighthouse green on performance + accessibility
+- **Accessibility**: contrast ≥ 4.5:1, skip-to-content link, visible keyboard focus, labeled form fields, `alt` on every image, `prefers-reduced-motion` respected
+- **Security**: `_headers` file with `X-Content-Type-Options`, `Referrer-Policy` and a basic CSP; no secrets in browser code (the API key lives server-side); `rel="noopener"` on external links
+- **Legal & trust**: visible contact, privacy note (the Riot ID is sent to the HenrikDev API and never stored), Riot non-affiliation disclaimer, no cookies → no banner needed; optional cookieless analytics (Cloudflare Web Analytics)
+- **UX polish**: hero glow + sample-card showcase, loading skeleton, card entrance animation, region pills, visual countdown on 429, richer error states
+- **Optional / later**: ES/EN switch with `hreflang`, JSON-LD `SoftwareApplication`, custom domain, `security.txt`
 
 ### v3 — More games & integrations (planned 📋)
 

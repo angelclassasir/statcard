@@ -3,59 +3,122 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>statcard — Valorant stat cards</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>statcard — Valorant Stat Card Generator</title>
+    <meta name="description"
+        content="Generate a polished PNG stat card for any Valorant player: rank, K/D, win rate and last matches. Free, no install, no cookies." />
+    <link rel="canonical" href="https://statcard.pages.dev/" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta name="theme-color" content="#101117" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="statcard — Valorant Stat Card Generator" />
+    <meta property="og:description"
+        content="Generate a polished PNG stat card for any Valorant player: rank, K/D, win rate and last matches. Free, no install, no cookies." />
+    <meta property="og:url" content="https://statcard.pages.dev/" />
+    <meta property="og:image" content="https://statcard.pages.dev/assets/og-1200x630.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter / Discord preview -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="statcard — Valorant Stat Card Generator" />
+    <meta name="twitter:description"
+        content="Generate a polished PNG stat card for any Valorant player. Free, no install, no cookies." />
+    <meta name="twitter:image" content="https://statcard.pages.dev/assets/og-1200x630.png" />
+
     <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-    <header>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="hero">
         <h1>stat<span>card</span></h1>
-        <p class="subtitle">Visual stat cards for your Valorant matches.</p>
+        <p class="tagline">Visual stat cards for your Valorant matches.</p>
     </header>
 
-    <main class="container">
+    <main id="main">
+        <section class="games" aria-labelledby="games-title">
+            <h2 id="games-title" class="section-title">Choose your game</h2>
+            <div class="game-tiles">
+                <button type="button" class="game-tile is-active" data-game="valorant" aria-pressed="true">
+                    <img src="assets/logo-valorant.png" alt="" width="48" height="48" aria-hidden="true" />
+                    <span class="game-name">Valorant</span>
+                    <span class="game-state">Live</span>
+                </button>
+                <button type="button" class="game-tile" data-game="cs2" disabled aria-pressed="false">
+                    <img src="assets/logo-cs2.png" alt="" width="48" height="48" aria-hidden="true" />
+                    <span class="game-name">CS2</span>
+                    <span class="game-badge">v3</span>
+                </button>
+            </div>
+        </section>
+
         <form class="card-form" id="card-form" novalidate>
             <div class="field">
                 <label for="riot-id">Riot ID</label>
-                <input id="riot-id" name="riot-id" type="text" placeholder="Name#TAG" autocomplete="off" required />
+                <input id="riot-id" name="riot-id" type="text" placeholder="Name#TAG" autocomplete="off" required
+                    aria-describedby="riot-hint" />
+                <p id="riot-hint" class="hint">Format: Name#TAG (e.g. Horcus#1995)</p>
             </div>
 
-            <div class="field">
-                <label for="region">Region</label>
-                <select id="region" name="region">
-                    <option value="eu" selected>EU</option>
-                    <option value="na">NA</option>
-                    <option value="ap">AP</option>
-                    <option value="kr">KR</option>
-                    <option value="br">BR</option>
-                    <option value="latam">LATAM</option>
-                </select>
-            </div>
+            <fieldset class="field">
+                <legend>Region</legend>
+                <div class="pills">
+                    <input type="radio" id="region-eu" name="region" value="eu" checked />
+                    <label for="region-eu">EU</label>
+                    <input type="radio" id="region-na" name="region" value="na" />
+                    <label for="region-na">NA</label>
+                    <input type="radio" id="region-ap" name="region" value="ap" />
+                    <label for="region-ap">AP</label>
+                    <input type="radio" id="region-kr" name="region" value="kr" />
+                    <label for="region-kr">KR</label>
+                    <input type="radio" id="region-br" name="region" value="br" />
+                    <label for="region-br">BR</label>
+                    <input type="radio" id="region-latam" name="region" value="latam" />
+                    <label for="region-latam">LATAM</label>
+                </div>
+            </fieldset>
 
-            <div class="field">
-                <label>&nbsp;</label>
-                <button type="submit" id="submit-btn">Generate</button>
-            </div>
-
-            <div class="field">
-                <label>&nbsp;</label>
-                <a id="download-link" hidden class="download-link" href="">⬇ Save PNG</a>
-            </div>
+            <button type="submit" id="submit-btn">Generate</button>
         </form>
 
-        <div class="preview">
-            <div id="status" class="status" role="status" aria-live="polite"></div>
-            <img id="preview" hidden alt="Generated stat card" />
-        </div>
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+
+        <section class="preview" aria-label="Generated card">
+            <div id="skeleton" class="skeleton" hidden aria-hidden="true"></div>
+            <img id="preview" alt="" hidden width="1000" height="400" />
+            <a id="download-link" class="download-link" href="" hidden>⬇ Save PNG</a>
+        </section>
+
+        <section class="showcase" aria-labelledby="showcase-title">
+            <h2 id="showcase-title" class="section-title">Example cards</h2>
+            <div class="showcase-row">
+                <img src="assets/showcase-1.png"
+                    alt="Valorant stat card for Horcus: Immortal 3, K/D 1.74, 71 wins this season" width="1000"
+                    height="400" loading="lazy" />
+                <img src="assets/showcase-2.png"
+                    alt="Valorant stat card for Mabi: Diamond 2 with recent competitive matches" width="1000"
+                    height="400" loading="lazy" />
+            </div>
+        </section>
     </main>
 
     <footer>
-        Stats via HenrikDev API · Built by
-        <a href="https://github.com/angelclassasir" target="_blank" rel="noopener">angelclassasir</a>
+        <nav aria-label="Footer">
+            <a href="https://github.com/angelclassasir/statcard" target="_blank" rel="noopener">GitHub</a>
+            <a href="https://callmeangel.pages.dev" target="_blank" rel="noopener">Portfolio</a>
+            <a href="https://github.com/angelclassasir/statcard/blob/master/LICENSE" target="_blank"
+                rel="noopener">License</a>
+        </nav>
+        <p class="legal">
+            Fan-made, non-commercial project. Not affiliated with Riot Games or Valve. All game logos
+            and trademarks are property of their respective owners. Your Riot ID is sent to the
+            HenrikDev API to fetch public stats and cached for at most 1 hour; it is never stored
+            permanently. No cookies are used.
+        </p>
     </footer>
 
     <script src="config.js"></script>

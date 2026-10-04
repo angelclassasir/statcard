@@ -11,7 +11,7 @@ an explicit owner decision recorded here.
       ▼
     Cloudflare Pages  ──frontend/──►  fetch PNG/JSON
       ▼
-    FastAPI backend (Railway, single free-tier instance)
+    FastAPI backend (Render free tier, single instance + UptimeRobot pinger)
       │  server-side only: the HenrikDev key NEVER leaves this process
       ▼
     HenrikDev API  ◄──  disk cache (.cache/, TTL 1 h, shared across visitors)
@@ -25,7 +25,7 @@ an explicit owner decision recorded here.
 | 3 | Rate limit | 3 req/min per client IP on `/api/*`; global cap 20 req/min | HenrikDev free tier = 30 req/min; per-user = 10% of it; global cap keeps headroom for concurrent users + owner CLI |
 | 4 | Cache | Reuse `statcard.cache` (SHA-1 disk cache), web TTL = 3600 s | Shared across visitors; CLI (600 s) and web coexist on the same dir (TTL checked per read) |
 | 5 | Domain | `https://<project>.pages.dev` now; custom domain deferred | Free forever; custom only if the project grows/gets monetized (v3+ decision) |
-| 6 | Hosting | Primary: Railway free plan. B: Render free + pinger. C: HF Spaces | See §9; verify free-tier terms at setup |
+| 6 | Hosting | Primary: Render free web service + UptimeRobot pinger (5 min). B: Railway (~$1/mo after trial). C: HF Spaces | 100% free forever; free instance sleeps after 15 min idle, pinger prevents it; cold start only right after deploys |
 | 7 | License | Unchanged: PolyForm NC + commercial on request | Public web service is non-commercial |
 
 ## 3. Monorepo layout (v2 final)
@@ -53,7 +53,7 @@ an explicit owner decision recorded here.
 ## 4. Backend contract
 
 - `GET /healthz` → 200 `{"status":"ok","version":...}`. Exempt from rate limit.
-  Used by Railway healthcheck and by the Plan-B pinger.
+  Used by Render healthcheck and by the UptimeRobot pinger.
 - `GET /api/valorant/{riot_id}?region=eu` → 200 `image/png` (rendered card).
   Header: `Cache-Control: public, max-age=3600` (mirrors cache TTL).
 - `GET /api/valorant/{riot_id}/json` → 200 `application/json`
@@ -80,14 +80,14 @@ Error mapping (provider errors → HTTP):
 - Client IP: leftmost `X-Forwarded-For` if present, else `request.client.host`.
   Spoofable by design: this is a courtesy/abuse deterrent, not a security boundary.
 - Applies only to `/api/*`; `/healthz` and `/docs` exempt.
-- Single-instance assumption (Railway free = 1 instance). Multi-instance upgrade
+- Single-instance assumption (Render free = 1 instance). Multi-instance upgrade
   path = Redis-backed limiter (v2.x); keep the limiter backend swappable.
 
 ## 6. Caching
 
 - Reuse `src/statcard/cache.py` unchanged. Web reads/writes with
   `ttl=WEB_CACHE_TTL` (default 3600).
-- Railway filesystem is ephemeral: cache lost on redeploy. Acceptable (cache is
+- Render filesystem is ephemeral: cache lost on redeploy. Acceptable (cache is
   an optimization, not correctness). No paid volumes.
 - Upgrade path: Redis only if multi-instance becomes real.
 
@@ -98,11 +98,11 @@ Error mapping (provider errors → HTTP):
 - `app.js`: `fetch(STATCARD_API + /api/valorant/<encoded>?region=...)`;
   200 → blob → objectURL → `<img>`; 4xx/5xx → show JSON `detail`
   (429 also shows `retry_after`).
-- `config.js`: `window.STATCARD_API = "https://<railway>.up.railway.app";`
+- `config.js`: `window.STATCARD_API = "https://statcard.onrender.com";`
   The only file edited between deploys.
 - CORS: backend allows origins from `ALLOWED_ORIGINS` (local dev + pages.dev).
 
-## 8. Environment variables (Railway dashboard, never in repo)
+## 8. Environment variables (Render dashboard, never in repo)
 
 - `HENRIKDEV_API_KEY` (required)
 - `WEB_CACHE_TTL` (int seconds, default 3600)
@@ -112,25 +112,23 @@ Error mapping (provider errors → HTTP):
 
 ## 9. Hosting plan (free, 24/7 target)
 
-Primary — Railway free plan:
-- Builder Nixpacks (uv-aware). Install: `uv sync --frozen --no-dev`.
-  Start: `uv run uvicorn statcard.web.app:app --host 0.0.0.0 --port ${PORT:-8000}`.
-- Resource caps to fit the free credit: 0.5 vCPU / 512 MB max.
-- Healthcheck: `/healthz`. Public subdomain `*.up.railway.app` = STATCARD_API.
-- VERIFY AT SETUP: current free-plan credit/hours vs a 24/7 small service.
+Primary — Render free web service + UptimeRobot pinger:
+- Runtime Python 3. Build: `pip install uv && uv sync --frozen --no-dev`.
+  Start: `uv run uvicorn statcard.web.app:app --host 0.0.0.0 --port $PORT`.
+- Free instances spin down after 15 min of inactivity; an UptimeRobot HTTP
+  monitor hits `/healthz` every 5 min so the service never sleeps. Cold start
+  (~30-50 s) only right after deploys.
+- Public URL: https://statcard.onrender.com
 
-Plan B — Render free web service + external pinger (UptimeRobot/cron-job.org,
-every 5-10 min against `/healthz`). Sleeps after ~15 min idle otherwise;
-cold start ~30 s.
-
+Plan B — Railway: $5 trial credit, then ~$1/mo. Always-on without pinger.
 Plan C — Hugging Face Spaces free CPU (Docker). Generally always-on, no SLA.
 
 ## 10. Deploy order (chicken-and-egg resolved)
 
 1. Merge v2 code to master.
-2. Deploy backend on Railway → obtain `https://xxx.up.railway.app`.
-3. Put that URL in `frontend/config.js`; set `ALLOWED_ORIGINS` on Railway to the
-   future `https://<cf-project>.pages.dev`.
+2. Deploy backend on Render → obtain `https://statcard.onrender.com`.
+3. Put that URL in `frontend/config.js`; set `ALLOWED_ORIGINS` on Render to the
+   future `https://statcard.pages.dev`.
 4. Create CF Pages project (repo, output dir `frontend`, no build command).
 5. End-to-end verify; update README URLs/badges.
 
@@ -158,7 +156,7 @@ Plan C — Hugging Face Spaces free CPU (Docker). Generally always-on, no SLA.
 
 ## 14. Open verification items at setup
 
-- [ ] Railway free-plan terms as of deploy date (credit vs hours).
-- [ ] Nixpacks uv detection on Railway (fallback: 15-line Dockerfile).
+- [x] Render free-plan terms as of deploy date (15 min sleep, pinger workaround).
+- [x] Render Python 3 runtime + uv sync build command.
 - [ ] Final CF Pages project name → pages.dev origin for ALLOWED_ORIGINS.
 - [ ] Confirm HenrikDev free-tier current limit (30 req/min figure).

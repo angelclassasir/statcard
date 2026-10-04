@@ -18,7 +18,9 @@
 
 `statcard` obtiene tus estadísticas de **Valorant**, las unifica en un formato común y las renderiza en una tarjeta PNG lista para compartir en Discord, redes sociales o tu perfil de GitHub.
 
-> ⚠️ **Estado del proyecto:** v1 (Valorant) funcional — pulido del CLI y tests offline en curso. El soporte para CS2 está planeado para la v2 (ver [Hoja de ruta](#-hoja-de-ruta)).
+> 🌐 **Demo en vivo:** [statcard.pages.dev](https://statcard.pages.dev) — genera tu tarjeta sin instalar nada.
+
+> ⚠️ **Estado del proyecto:** la v1 (CLI de Valorant) y la v2 (aplicación web pública) están publicadas y en producción. La v2.1 (pulido estético UI/UX) está en progreso. Ver [Hoja de ruta](#-hoja-de-ruta).
 
 ---
 
@@ -60,17 +62,26 @@
 - Caché en disco (TTL 10 min), CLI con argparse, suite de tests offline
 - Licencia dual (PolyForm NC + comercial bajo autorización)
 
-### v2 — Aplicación web pública (implementada localmente 🚧, deploy pendiente)
+### v2 — Aplicación web pública (publicada ✅)
 
-- Backend FastAPI en `src/statcard/web/`
-  - Endpoints: `/healthz`, `/api/valorant/{riot_id}` (PNG), `/api/valorant/{riot_id}/json`
-  - Rate limit con ventana deslizante (3/min por IP + 20/min global)
-  - Caché compartida en disco (TTL 1 h)
-- Frontend HTML/JS/CSS vanilla en `frontend/`
-  - Formulario con validación de Riot ID + selector de región
-  - Preview en vivo + descarga PNG
-- **Pendiente:** deploy a Railway (backend) + Cloudflare Pages (frontend)
+- Backend FastAPI (`src/statcard/web/`): `/healthz`, `/api/valorant/{riot_id}` (PNG), `/api/valorant/{riot_id}/json`
+- Rate limit con ventana deslizante (3/min por IP + 20/min global) + caché compartida en disco (TTL 1 h)
+- Frontend HTML/JS/CSS vanilla (`frontend/`), sin build step
+- Producción: backend en Render free tier (pinger keep-awake) + frontend en Cloudflare Pages → [statcard.pages.dev](https://statcard.pages.dev)
 - Documento de diseño: [`docs/INFRASTRUCTURE.md`](docs/INFRASTRUCTURE.md)
+
+### v2.1 — Calidad web, pulido y selector de juego (en progreso 🚧)
+
+- **Selector de juego**: cabecera "elige tu juego" con los logos oficiales — Valorant (activo) y CS2 (deshabilitado con badge "llega en v3")
+- **Base técnica**: HTTPS en todo el sitio, `lang` / `charset` / `viewport` correctos, probado en móvil real
+- **SEO e identidad**: `<title>` único y descriptivo, meta description, canonical, favicon SVG real, un solo `<h1>`, URLs limpias, `robots.txt` + `sitemap.xml` + `404.html` personalizada, alta en Google Search Console
+- **Compartir en redes**: Open Graph + `twitter:card = summary_large_image` con preview de 1200×630 generada por nuestro propio pipeline de Pillow
+- **Rendimiento**: fuentes WOFF2 auto-alojadas (sin Google Fonts), imágenes WebP/AVIF con dimensiones explícitas, cero librerías sin usar, Lighthouse en verde en rendimiento + accesibilidad
+- **Accesibilidad**: contraste ≥ 4.5:1, enlace "saltar al contenido", foco visible al navegar con teclado, `<label>` en cada campo, `alt` en todas las imágenes, respeto por `prefers-reduced-motion`
+- **Seguridad**: archivo `_headers` con `X-Content-Type-Options`, `Referrer-Policy` y CSP básica; ningún secreto en el código del navegador (la clave vive en el servidor); `rel="noopener"` en enlaces externos
+- **Legal y confianza**: contacto visible, nota de privacidad (el Riot ID se envía a la API de HenrikDev y no se guarda), aviso de no afiliación con Riot, sin cookies → sin banner; analítica sin cookies opcional (Cloudflare Web Analytics)
+- **Pulido UX**: glow en el hero + showcase de tarjetas de ejemplo, skeleton de carga, animación de entrada de la tarjeta, pills de región, cuenta atrás visual en 429, estados de error más ricos
+- **Opcional / más adelante**: switch ES/EN con `hreflang`, JSON-LD `SoftwareApplication`, dominio propio, `security.txt`
 
 ### v3 — Más juegos e integraciones (planificado 📋)
 
