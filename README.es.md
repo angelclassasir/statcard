@@ -53,27 +53,29 @@
 
 ## 🗺️ Hoja de ruta
 
-### v1 (actual)
+## 🗺️ Roadmap
 
-| Fase | Descripción | Estado |
-| :---: | --- | :---: |
-| 0 | Configuración del repositorio y estructura inicial | ✅ Hecho |
-| 1 | Integración con la API de Valorant (HenrikDev) + modelos de datos | ✅ Hecho |
-| 2 | Primer renderizado de tarjeta con Pillow + tema oscuro | ✅ Hecho |
-| 3 | Caché en disco + gestión de errores | ✅ Hecho |
-| 4 | *(omitida — CS2 movido a la v2)* | ⏸️ |
-| 5 | CLI con `argparse` + tests offline | 🚧 En curso |
-| 6 | README, ejemplos, avisos legales, subida a GitHub | ⬜ |
+### Versión actual: v1 (Valorant)
+- ✅ Integración de la API de HenrikDev
+- ✅ K/D de la temporada con datos de las partidas recientes como alternativa
+- ✅ Compatibilidad con múltiples alfabetos (latino, CJK, cirílico)
+- ✅ Conjunto de pruebas sin conexión
+- ✅ CLI con argparse
 
-### v2 (planeada)
+### Próxima versión: v2 — Aplicación web
+- **Infraestructura:** Implementación del backend de FastAPI en Railway (nivel gratuito, 24/7)
+- **Frontend:** Cloudflare Pages (estático, ilimitado)
+- **Caché compartida:** caché respaldada por disco en Railway (TTL de 10 minutos, compartida entre usuarios)
+- **Punto final de la API:** `GET /api/valorant/{name}/{tag}?region=eu`
+- **Limitación de tasa:** restricción por IP para proteger la clave API de HenrikDev
 
-| Fase | Descripción | Estado |
-| :---: | --- | :---: |
-| 7 | Soporte para CS2 (FACEIT o Leetify, ver nota abajo) | ⬜ |
-| 8 | Backend FastAPI + frontend web (Cloudflare Pages) | ⬜ |
-| 9 | *(Opcional)* Bot de Discord con comando `/stats` | ⬜ |
+### Futuro: v3 — CS2 + más juegos
+- **Proveedor de CS2:** API de datos de FACEIT (requiere KYC) o Leetify (requiere el consentimiento del jugador)
+- **Bot de Discord:** comando `/stats` que reutiliza los proveedores existentes
+- **Paginación de partidas:** Obtener el K/D de toda la temporada para jugadores con más de 100 partidas
+- **Detección automática de región:** Probar con `eu`/`na`/`ap`/`kr` hasta que el punto final de partidas devuelva datos
 
-> **Sobre CS2:** Valve no expone una API pública para las estadísticas competitivas de CS2. Las alternativas o requieren verificación de identidad (FACEIT Data API) o dependen de que el jugador use un servicio de análisis de terceros (Leetify). El soporte de CS2 llegará en la v2, una vez elegida la fuente de datos.
+> **Sobre CS2:** Valve no expone una API pública para las estadísticas competitivas de CS2. Las alternativas o requieren verificación de identidad (FACEIT Data API) o dependen de que el jugador use un servicio de análisis de terceros (Leetify). El soporte de CS2 llegará en la v3, una vez elegida la fuente de datos.
 
 ## 🚀 Primeros pasos
 
@@ -114,6 +116,7 @@ El proyecto usa fuentes bajo la licencia SIL Open Font License:
 
 
 ## 📁 Estructura del Proyecto
+```text
 statcard/
 ├── src/statcard/
 │   ├── __main__.py       # Punto de entrada del CLI
@@ -133,6 +136,7 @@ statcard/
 ├── output/               # Tarjetas generadas (ignorado por git)
 ├── .env.example          # Plantilla para las claves de API
 └── pyproject.toml
+```
 
 El principio de diseño clave es: cada juego tiene su propio provider que siempre devuelve el mismo formato común. El renderizador nunca sabe de dónde provienen los datos. Añadir un nuevo juego es simplemente escribir un módulo provider más.
 

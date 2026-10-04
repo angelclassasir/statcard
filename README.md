@@ -47,27 +47,27 @@
 
 ## 🗺️ Roadmap
 
-### v1 (current)
+### Current: v1 (Valorant)
+- ✅ HenrikDev API integration
+- ✅ Season K/D with fallback to recent matches
+- ✅ Multi-script font support (Latin, CJK, Cyrillic)
+- ✅ Offline test suite
+- ✅ CLI with argparse
 
-| Phase | Description | Status |
-| :---: | --- | :---: |
-| 0 | Repository setup and initial structure | ✅ Done |
-| 1 | Valorant API integration (HenrikDev) + data models | ✅ Done |
-| 2 | First card render with Pillow + dark theme | ✅ Done |
-| 3 | Disk caching + error handling | ✅ Done |
-| 4 | *(skipped — CS2 moved to v2)* | ⏸️ |
-| 5 | CLI with `argparse` + offline tests | 🚧 In Progress |
-| 6 | README, examples, legal notices, GitHub push | ⬜ |
+### Next: v2 — Web App
+- **Infrastructure:** Deploy FastAPI backend on Railway (free tier, 24/7)
+- **Frontend:** Cloudflare Pages (static, unlimited)
+- **Shared cache:** Disk-backed cache on Railway (TTL 10mins, shared across users)
+- **API endpoint:** `GET /api/valorant/{name}/{tag}?region=eu`
+- **Rate limiting:** Per-IP throttling to protect HenrikDev API key
 
-### v2 (planned)
+### Future: v3 — CS2 + More Games
+- **CS2 provider:** FACEIT Data API (requires KYC) or Leetify (requires player opt-in)
+- **Discord bot:** `/stats` command reusing existing providers
+- **Match pagination:** Fetch full season K/D for players with >100 matches
+- **Auto-region detection:** Try `eu`/`na`/`ap`/`kr` until matches endpoint returns data
 
-| Phase | Description | Status |
-| :---: | --- | :---: |
-| 7 | CS2 support (FACEIT or Leetify, see note below) | ⬜ |
-| 8 | FastAPI backend + web frontend (Cloudflare Pages) | ⬜ |
-| 9 | *(Optional)* Discord bot with `/stats` command | ⬜ |
-
-> **About CS2:** Valve does not expose a public API for CS2 competitive stats. The alternatives either require identity verification (FACEIT Data API) or depend on the player using a third-party analytics service (Leetify). CS2 support will land in v2 once the data source is chosen.
+> **About CS2:** Valve does not expose a public API for CS2 competitive stats. The alternatives either require identity verification (FACEIT Data API) or depend on the player using a third-party analytics service (Leetify). CS2 support will land in v3 once the data source is chosen.
 
 ## 🚀 Getting Started
 
@@ -107,25 +107,34 @@ The project uses fonts under the SIL Open Font License:
      for the download commands.
 
 ## 📁 Project Structure
+```text
 statcard/
 ├── src/statcard/
-│   ├── __main__.py       # CLI entry point
-│   ├── models.py         # Common stat format (pydantic)
-│   ├── cache.py          # Disk cache with expiration
-│   ├── render.py         # Card rendering (Pillow)
+│   ├── __init__.py
+│   ├── __main__.py            # CLI entry point (argparse)
+│   ├── models.py              # Common stat format (pydantic)
+│   ├── cache.py               # Disk cache with expiration
+│   ├── render.py               # Card rendering (Pillow)
 │   ├── providers/
-│   │   └── valorant.py   # HenrikDev -> common format
+│   │   ├── __init__.py
+│   │   └── valorant.py        # HenrikDev -> common format
 │   └── themes/
-│       └── dark.py       # Colors, fonts, sizes
+│       ├── __init__.py
+│       └── dark.py            # Colors, fonts, sizes
 ├── assets/
-│   └── fonts/            # SIL OFL fonts (see assets/fonts/README.md)
+│   └── fonts/                 # SIL OFL fonts (see assets/fonts/README.md)
 ├── tests/
-│   ├── fixtures/         # Saved API responses for offline testing
-│   └── test_*.py
-├── examples/             # Sample cards for this README
-├── output/               # Generated cards (git-ignored)
-├── .env.example          # Template for API keys
+│   ├── fixtures/              # Saved API responses for offline testing
+│   ├── test_valorant.py
+│   ├── test_cache.py
+│   └── test_cli.py
+├── scripts/
+│   └── smoke_valorant.py      # Manual live-API check (Horcus#1995)
+├── examples/                  # Sample cards for this README
+├── output/                  # Generated cards (git-ignored)
+├── .env.example               # Template for API keys
 └── pyproject.toml
+```
 
 Key design principle: Each game has its own provider that always returns the same common format. The renderer never knows where the data came from. Adding a new game is just writing one more provider module.
 
