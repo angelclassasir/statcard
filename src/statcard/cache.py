@@ -99,10 +99,15 @@ def get(key: str, ttl_seconds: int = DEFAULT_TTL_SECONDS) -> Any | None:
     return hit[0] if hit is not None else None
 
 
-def set(key: str, payload: Any) -> None:
-    """Store a payload in the cache atomically, then enforce the budget."""
+def set(key: str, payload: Any) -> float:
+    """Store a payload atomically and return the timestamp saved with it.
+
+    Callers can reuse the returned timestamp (instead of ``time.time()``) so a
+    freshly fetched payload and a later cache hit render identical output.
+    """
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    blob = {"saved_at": time.time(), "payload": payload}
+    saved_at = time.time()
+    blob = {"saved_at": saved_at, "payload": payload}
     path = _cache_path(key)
 
     # Write next to the target so os.replace() stays on the same filesystem.
@@ -115,3 +120,4 @@ def set(key: str, payload: Any) -> None:
             _safe_unlink(tmp_path)
 
     _evict_if_needed()
+    return saved_at

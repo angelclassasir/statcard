@@ -222,8 +222,10 @@ async def _fetch_payloads_with_metadata(
         )
 
     payloads = _slim_payloads({"account": account, "mmr": mmr, "matches": matches})
-    cache.set(cache_key, payloads)
-    return payloads, datetime.now(UTC)
+    saved_at = cache.set(cache_key, payloads)
+    # Reuse the cache timestamp so this response renders byte-identical to a
+    # later cache hit (important for ETag stability).
+    return payloads, datetime.fromtimestamp(saved_at, UTC)
 
 
 async def fetch_raw_payloads(

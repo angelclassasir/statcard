@@ -1,6 +1,6 @@
 [project]
 name = "statcard"
-version = "2.2.0"
+version = "2.2.1"
 description = "Generate visual, shareable stat cards for Valorant and CS2"
 readme = "README.md"
 requires-python = ">=3.12"

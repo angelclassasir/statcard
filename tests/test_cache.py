@@ -32,13 +32,13 @@ def test_expired_entry_is_deleted_from_disk(tmp_path, monkeypatch):
 
 def test_metadata_includes_the_saved_timestamp(tmp_path, monkeypatch):
     monkeypatch.setattr(cache, "CACHE_DIR", tmp_path)
-    cache.set("k", {"a": 1})
+    saved_at = cache.set("k", {"a": 1})
 
     hit = cache.get_with_metadata("k")
     assert hit is not None
-    payload, saved_at = hit
+    payload, stored_at = hit
     assert payload == {"a": 1}
-    assert abs(time.time() - saved_at) < 5
+    assert stored_at == saved_at
 
 
 def test_eviction_keeps_the_newest_entries(tmp_path, monkeypatch):

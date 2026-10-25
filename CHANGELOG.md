@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [2.2.1] — 2026-10-25
+
+### Fixed
+
+- **Stable ETag**: a fresh fetch and a later cache hit now share the same
+  timestamp, so the first `If-None-Match` revalidation returns 304 instead of
+  re-rendering a card whose footer differed by milliseconds.
+- **Dead portfolio link** removed from the frontend footer and both READMEs
+  (`callmeangel.pages.dev` no longer resolves); the footer now points to the
+  roadmap.
+
 ## [2.2.0] — 2026-10-25
 
 Hardening pass: bug fixes, cache and performance work, repository hygiene.

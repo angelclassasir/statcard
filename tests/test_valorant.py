@@ -11,6 +11,7 @@ from pathlib import Path
 import httpx
 import pytest
 
+from statcard import cache
 from statcard.models import PlayerStats
 from statcard.providers import valorant as provider
 from statcard.providers.valorant import parse_stats
@@ -119,3 +120,32 @@ def test_missing_api_key_raises_auth_error(monkeypatch):
     monkeypatch.delenv("HENRIKDEV_API_KEY", raising=False)
     with pytest.raises(provider.ValorantAuthError):
         provider._auth_headers()
+
+
+def test_fresh_fetch_and_cache_hit_share_the_same_timestamp(tmp_path, monkeypatch):
+    """The card footer (and therefore the PNG ETag) must not change on a hit."""
+    monkeypatch.setattr(cache, "CACHE_DIR", tmp_path)
+    payloads = _payloads()
+
+    async def fake_get_json(client, path):
+        if "/account/" in path:
+            return payloads["account"]
+        if "/mmr/" in path:
+            return payloads["mmr"]
+        return payloads["matches"]
+
+    class DummyClient:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            return False
+
+    monkeypatch.setattr(provider, "_get_json", fake_get_json)
+    monkeypatch.setattr(provider.httpx, "AsyncClient", lambda **kwargs: DummyClient())
+
+    first = asyncio.run(provider.fetch_valorant_stats("Horcus", "1995"))
+    second = asyncio.run(provider.fetch_valorant_stats("Horcus", "1995"))
+
+    assert first.last_updated == second.last_updated
+    assert first.kd_ratio == second.kd_ratio
