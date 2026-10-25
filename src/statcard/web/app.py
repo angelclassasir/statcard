@@ -1,5 +1,8 @@
 """FastAPI application factory for the statcard web backend."""
 
+import logging
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -11,6 +14,11 @@ from statcard.web.settings import Settings, load_settings
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     """Build the FastAPI app; settings are injectable for tests."""
+    logging.basicConfig(
+        level=os.getenv("LOG_LEVEL", "INFO").upper(),
+        format="%(asctime)s %(levelname)-8s %(name)s: %(message)s",
+    )
+
     app = FastAPI(title="statcard", version=__version__, redoc_url=None)
     app.state.settings = settings or load_settings()
     app.state.limiter = SlidingWindowLimiter()
@@ -24,7 +32,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/healthz", tags=["ops"])
     async def healthz() -> dict[str, str]:
-        """Liveness probe for Railway healthchecks and the Plan-B pinger."""
+        """Liveness probe for Render healthchecks and the keep-awake pinger."""
         return {"status": "ok", "version": __version__}
 
     app.include_router(api_router)

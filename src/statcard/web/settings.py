@@ -8,6 +8,8 @@ DEFAULT_ALLOWED_ORIGINS = (
     "http://127.0.0.1:8000",
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    # Production frontend: keeps CORS working if ALLOWED_ORIGINS is ever unset.
+    "https://statcard.pages.dev",
 )
 
 

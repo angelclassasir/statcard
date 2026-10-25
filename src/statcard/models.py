@@ -1,6 +1,6 @@
 """Common data models for stat cards."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
@@ -41,9 +41,14 @@ class PlayerStats(BaseModel):
 
     # Metadata
     last_updated: datetime = Field(
-        default_factory=datetime.now,
-        description="When these stats were fetched",
+        default_factory=lambda: datetime.now(UTC),
+        description="When these stats were fetched (UTC)",
     )
+
+    @property
+    def losses(self) -> int:
+        """Matches played minus wins, never negative."""
+        return max(self.total_matches - self.wins, 0)
 
     def get_win_rate_display(self) -> str:
         """Formatted win rate for display."""

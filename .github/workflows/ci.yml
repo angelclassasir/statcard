@@ -4,6 +4,11 @@ on:
   push:
     branches: [master]
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   checks:
@@ -11,8 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
-      - run: uv python install 3.12
-      - run: uv sync --all-extras --dev
+        with:
+          enable-cache: true
+          python-version: "3.12"
+      - run: uv sync --frozen --all-extras --dev
+      - name: Ensure no secrets are tracked
+        run: "! git ls-files --error-unmatch .env 2>/dev/null"
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run pyrefly check

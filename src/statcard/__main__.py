@@ -4,7 +4,9 @@ import argparse
 import asyncio
 import sys
 
+from statcard import __version__
 from statcard.providers.valorant import (
+    VALID_REGIONS,
     ValorantProviderError,
     fetch_valorant_stats,
 )
@@ -17,6 +19,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="statcard",
         description="Generate visual stat cards for your favorite FPS games.",
     )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subparsers = parser.add_subparsers(dest="game", required=True)
 
     valorant = subparsers.add_parser("valorant", help="Generate a Valorant stat card")
@@ -24,6 +27,8 @@ def build_parser() -> argparse.ArgumentParser:
     valorant.add_argument(
         "--region",
         default="eu",
+        choices=VALID_REGIONS,
+        metavar="REGION",
         help="Riot region: eu, na, ap, kr, br, latam (default: eu)",
     )
     valorant.add_argument(
@@ -34,7 +39,8 @@ def build_parser() -> argparse.ArgumentParser:
     valorant.add_argument(
         "--output",
         default=None,
-        help="Output PNG filename (default: output/valorant_card.png)",
+        metavar="PATH",
+        help="Output PNG path (default: output/valorant_card.png)",
     )
     return parser
 
@@ -44,23 +50,23 @@ def main() -> int:
     args = build_parser().parse_args()
 
     if args.game == "valorant":
-        if "#" not in args.riot_id:
-            print('Error: the Riot ID must look like "Name#TAG".')
+        name, sep, tag = args.riot_id.partition("#")
+        if not sep or not name.strip() or not tag.strip():
+            print('Error: the Riot ID must look like "Name#TAG".', file=sys.stderr)
             return 1
-        name, tag = args.riot_id.split("#", 1)
         try:
             stats = asyncio.run(
                 fetch_valorant_stats(
-                    name,
-                    tag,
+                    name.strip(),
+                    tag.strip(),
                     region=args.region,
                     use_cache=not args.no_cache,
                 )
             )
         except ValorantProviderError as exc:
-            print(f"Error: {exc}")
+            print(f"Error: {exc}", file=sys.stderr)
             return 1
-        path = save_card(stats, filename=args.output)
+        path = save_card(stats, path=args.output)
         print(f"Card saved to: {path}")
         return 0
 

@@ -1,7 +1,11 @@
 """Valorant provider: HenrikDev API -> common PlayerStats format."""
+
+import asyncio
+import logging
 import os
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
+from urllib.parse import quote
 
 import httpx
 from dotenv import load_dotenv
@@ -11,8 +15,7 @@ from statcard.models import PlayerStats
 
 load_dotenv()
 
-HENRIKDEV_API_KEY = os.getenv("HENRIKDEV_API_KEY", "")
-HENRIKDEV_BASE_URL = "https://api.henrikdev.xyz/valorant"
+HENRIKDEV_BASE_URL = os.getenv("HENRIKDEV_BASE_URL", "https://api.henrikdev.xyz/valorant")
 
 # Regions (affinities) accepted by the HenrikDev API
 VALID_REGIONS = ("eu", "na", "ap", "kr", "br", "latam")
@@ -20,12 +23,20 @@ VALID_REGIONS = ("eu", "na", "ap", "kr", "br", "latam")
 # Platform used by the MMR v3 endpoint
 PLATFORM = "pc"
 
+# The three upstream calls run in parallel, so a generous read timeout is cheap.
+REQUEST_TIMEOUT = httpx.Timeout(30.0, connect=10.0)
+
+CACHE_TTL_SECONDS = 10 * 60
+
+logger = logging.getLogger(__name__)
+
 
 class ValorantProviderError(Exception):
     """Raised when the API returns unexpected or missing data."""
 
+
 class ValorantAuthError(ValorantProviderError):
-    """HenrikDev rejected the API key (401)."""
+    """HenrikDev rejected the API key (401) or the key is missing."""
 
 
 class ValorantNotFoundError(ValorantProviderError):
@@ -35,13 +46,19 @@ class ValorantNotFoundError(ValorantProviderError):
 class ValorantRateLimitedError(ValorantProviderError):
     """HenrikDev rate-limited us (429)."""
 
+
 def _auth_headers() -> dict[str, str]:
-    """Return authorization headers, failing early if the key is missing."""
-    if not HENRIKDEV_API_KEY:
-        raise ValorantProviderError(
+    """Return authorization headers, failing early if the key is missing.
+
+    The environment is read on every call (instead of at import time) so tests
+    and long-running processes can pick up a rotated key.
+    """
+    key = os.getenv("HENRIKDEV_API_KEY", "").strip()
+    if not key:
+        raise ValorantAuthError(
             "HENRIKDEV_API_KEY is not set. Copy .env.example to .env and add your key."
         )
-    return {"Authorization": HENRIKDEV_API_KEY}
+    return {"Authorization": key}
 
 
 async def _get_json(client: httpx.AsyncClient, path: str) -> dict[str, Any]:
@@ -52,35 +69,133 @@ async def _get_json(client: httpx.AsyncClient, path: str) -> dict[str, Any]:
         response.raise_for_status()
     except httpx.HTTPStatusError as exc:
         status = exc.response.status_code
+        logger.warning("HenrikDev returned %s for %s", status, path)
         if status == 401:
-            raise ValorantProviderError(
+            raise ValorantAuthError(
                 "HenrikDev rejected the API key (401). Check HENRIKDEV_API_KEY in .env."
             ) from exc
         if status == 404:
-            raise ValorantProviderError(f"Player not found (404): {path}") from exc
+            raise ValorantNotFoundError("Player not found on HenrikDev (404).") from exc
         if status == 429:
-            raise ValorantProviderError(
-                "Rate limit reached (429). Wait a minute or rely on the cache."
+            raise ValorantRateLimitedError(
+                "Rate limit reached on HenrikDev (429). Wait a minute or rely on the cache."
             ) from exc
         raise ValorantProviderError(f"HenrikDev API error ({status}) for {path}") from exc
     except httpx.RequestError as exc:
         raise ValorantProviderError(
             "Could not reach the HenrikDev API (network down or blocked)."
         ) from exc
-    return response.json()
 
-CACHE_TTL_SECONDS = 10 * 60
+    try:
+        return response.json()
+    except ValueError as exc:
+        raise ValorantProviderError("HenrikDev returned a non-JSON response.") from exc
 
-async def fetch_raw_payloads(
+
+# --- Payload slimming -------------------------------------------------------
+#
+# The matches endpoint returns the full round history and kill feed for every
+# game: ~96% of the payload. The renderer only needs a handful of fields, so
+# we trim before caching. This keeps cache entries at a few hundred KB instead
+# of ~90 MB per player and makes cache hits fast.
+
+_METADATA_FIELDS = ("map", "mode", "queue", "season_id", "game_start_patched")
+
+
+def _slim_player(player: dict[str, Any]) -> dict[str, Any]:
+    """Keep only the player fields used by the parser."""
+    stats = player.get("stats") or {}
+    return {
+        "puuid": player.get("puuid"),
+        "name": player.get("name"),
+        "tag": player.get("tag"),
+        "riot_id": player.get("riot_id"),
+        "team": player.get("team"),
+        "character": player.get("character"),
+        "stats": {"kills": stats.get("kills", 0), "deaths": stats.get("deaths", 0)},
+    }
+
+
+def _slim_match(match: dict[str, Any]) -> dict[str, Any]:
+    """Drop round history, kill feed and unused player fields from one match."""
+    metadata = match.get("metadata") or {}
+    players = match.get("players") or {}
+    teams = match.get("teams") or {}
+
+    roster = players.get("all_players") or []
+    if not roster:
+        # Legacy schema used allies/enemies; normalize it to all_players.
+        roster = (players.get("allies") or []) + (players.get("enemies") or [])
+
+    return {
+        "metadata": {field: metadata.get(field) for field in _METADATA_FIELDS},
+        "players": {"all_players": [_slim_player(player) for player in roster]},
+        "teams": {
+            side: {
+                "has_won": (team or {}).get("has_won"),
+                "rounds_won": (team or {}).get("rounds_won"),
+                "rounds_lost": (team or {}).get("rounds_lost"),
+            }
+            for side, team in teams.items()
+        },
+    }
+
+
+def _slim_mmr(payload: dict[str, Any]) -> dict[str, Any]:
+    """Keep current/peak tiers and the first seasonal entries (used for W/L)."""
+    data = payload.get("data") or {}
+    current = data.get("current") or {}
+    peak = data.get("peak") or {}
+
+    seasonal = []
+    for entry in (data.get("seasonal") or [])[:3]:
+        season = entry.get("season") or {}
+        seasonal.append(
+            {
+                "season": {"id": season.get("id"), "short": season.get("short")},
+                "wins": entry.get("wins") or 0,
+                "games": entry.get("games") or 0,
+            }
+        )
+
+    return {
+        "status": payload.get("status"),
+        "data": {
+            "current": {"tier": {"name": (current.get("tier") or {}).get("name")}},
+            "peak": {"tier": {"name": (peak.get("tier") or {}).get("name")}},
+            "seasonal": seasonal,
+        },
+    }
+
+
+def _slim_payloads(payloads: dict[str, Any]) -> dict[str, Any]:
+    """Trim every upstream payload down to the fields parse_stats() reads."""
+    matches = payloads["matches"]
+    return {
+        "account": payloads["account"],
+        "mmr": _slim_mmr(payloads["mmr"]),
+        "matches": {
+            "status": matches.get("status"),
+            "data": [_slim_match(match) for match in (matches.get("data") or [])],
+        },
+    }
+
+
+# --- Fetching ---------------------------------------------------------------
+
+
+async def _fetch_payloads_with_metadata(
     name: str,
     tag: str,
     region: str = "eu",
     use_cache: bool = True,
     cache_ttl_seconds: int | None = None,
-) -> dict[str, Any]:
-    """Fetch raw JSON payloads (account, MMR, matches) with disk cache."""
+) -> tuple[dict[str, Any], datetime]:
+    """Fetch (or read from cache) the payloads plus the time they were fetched."""
     name, tag = name.strip(), tag.strip()
 
+    if not name or not tag:
+        raise ValorantProviderError("Both the Riot name and the tag are required.")
     if region not in VALID_REGIONS:
         raise ValorantProviderError(
             f"Unknown region '{region}'. Valid regions: {', '.join(VALID_REGIONS)}"
@@ -89,20 +204,49 @@ async def fetch_raw_payloads(
     cache_key = f"valorant:{region}:{name.lower()}#{tag.lower()}"
     ttl = CACHE_TTL_SECONDS if cache_ttl_seconds is None else cache_ttl_seconds
     if use_cache:
-        cached = cache.get(cache_key, ttl)
-        if cached is not None:
-            return cached
+        hit = cache.get_with_metadata(cache_key, ttl)
+        if hit is not None:
+            payloads, saved_at = hit
+            return payloads, datetime.fromtimestamp(saved_at, UTC)
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        account = await _get_json(client, f"/v1/account/{name}/{tag}")
-        mmr = await _get_json(client, f"/v3/mmr/{region}/{PLATFORM}/{name}/{tag}")
-        matches = await _get_json(
-            client, f"/v3/matches/{region}/{name}/{tag}?size=100&mode=Competitive"
+    # The three endpoints are independent: run them concurrently.
+    name_q, tag_q = quote(name, safe=""), quote(tag, safe="")
+    async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT) as client:
+        account, mmr, matches = await asyncio.gather(
+            _get_json(client, f"/v1/account/{name_q}/{tag_q}"),
+            _get_json(client, f"/v3/mmr/{region}/{PLATFORM}/{name_q}/{tag_q}"),
+            _get_json(
+                client,
+                f"/v3/matches/{region}/{name_q}/{tag_q}?size=100&mode=Competitive",
+            ),
         )
 
-    payloads = {"account": account, "mmr": mmr, "matches": matches}
+    payloads = _slim_payloads({"account": account, "mmr": mmr, "matches": matches})
     cache.set(cache_key, payloads)
+    return payloads, datetime.now(UTC)
+
+
+async def fetch_raw_payloads(
+    name: str,
+    tag: str,
+    region: str = "eu",
+    use_cache: bool = True,
+    cache_ttl_seconds: int | None = None,
+) -> dict[str, Any]:
+    """Return the provider payloads (trimmed to the fields the parser needs).
+
+    Kept as a public entry point for scripts and future providers; the name is
+    historical, the payload is no longer the complete upstream JSON.
+    """
+    payloads, _ = await _fetch_payloads_with_metadata(
+        name,
+        tag,
+        region=region,
+        use_cache=use_cache,
+        cache_ttl_seconds=cache_ttl_seconds,
+    )
     return payloads
+
 
 def _is_competitive(match: dict[str, Any]) -> bool:
     """Keep only competitive matches (skip deathmatch, unrated, swiftplay...)."""
@@ -110,6 +254,7 @@ def _is_competitive(match: dict[str, Any]) -> bool:
     mode = (metadata.get("mode") or metadata.get("queue") or "").lower()
     # If the field is missing entirely, give the match the benefit of the doubt
     return not mode or mode == "competitive"
+
 
 def _find_own_entry(
     match: dict[str, Any], puuid: str | None, name: str, tag: str
@@ -183,8 +328,17 @@ def _parse_recent_matches(
     return recent
 
 
-def parse_stats(payloads: dict[str, Any], name: str, tag: str) -> PlayerStats:
-    """Map raw HenrikDev payloads into the common PlayerStats model."""
+def parse_stats(
+    payloads: dict[str, Any],
+    name: str,
+    tag: str,
+    fetched_at: datetime | None = None,
+) -> PlayerStats:
+    """Map raw HenrikDev payloads into the common PlayerStats model.
+
+    ``fetched_at`` is the time the payloads were retrieved (a cache hit reports
+    the original fetch time, not the current one).
+    """
     account = payloads["account"].get("data")
     name, tag = name.strip(), tag.strip()
     if not account:
@@ -241,14 +395,20 @@ def parse_stats(payloads: dict[str, Any], name: str, tag: str) -> PlayerStats:
     if season_deaths:
         kd_ratio = round(season_kills / season_deaths, 2)
         kd_scope = "SEASON"
+        total_kills, total_deaths = season_kills, season_deaths
     elif fallback_deaths:
         kd_ratio = round(fallback_kills / fallback_deaths, 2)
         kd_scope = "RECENT"
+        total_kills, total_deaths = fallback_kills, fallback_deaths
     else:
         kd_ratio = 0.0
         kd_scope = "RECENT"
+        total_kills, total_deaths = 0, 0
 
     recent_matches = _parse_recent_matches(payloads["matches"], puuid, name, tag)
+
+    if fetched_at is not None and fetched_at.tzinfo is None:
+        fetched_at = fetched_at.replace(tzinfo=UTC)
 
     return PlayerStats(
         game="valorant",
@@ -260,12 +420,12 @@ def parse_stats(payloads: dict[str, Any], name: str, tag: str) -> PlayerStats:
         total_matches=games,
         wins=wins,
         win_rate=win_rate,
-        kills=season_kills,
-        deaths=season_deaths,
+        kills=total_kills,
+        deaths=total_deaths,
         kd_ratio=kd_ratio,
         kd_scope=kd_scope,
         recent_matches=recent_matches,
-        last_updated=datetime.now(),
+        last_updated=fetched_at or datetime.now(UTC),
     )
 
 
@@ -277,11 +437,11 @@ async def fetch_valorant_stats(
     cache_ttl_seconds: int | None = None,
 ) -> PlayerStats:
     """Public entry point: fetch and parse Valorant stats for one player."""
-    payloads = await fetch_raw_payloads(
+    payloads, fetched_at = await _fetch_payloads_with_metadata(
         name,
         tag,
         region=region,
         use_cache=use_cache,
         cache_ttl_seconds=cache_ttl_seconds,
     )
-    return parse_stats(payloads, name, tag)
+    return parse_stats(payloads, name, tag, fetched_at=fetched_at)

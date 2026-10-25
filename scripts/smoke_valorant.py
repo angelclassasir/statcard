@@ -1,12 +1,11 @@
-"""Manual smoke test for the Valorant provider (Phase 1).
+"""Manual smoke test for the Valorant provider (hits the live API).
 
-Run with: uv run python test_valorant.py
+Run with: uv run python scripts/smoke_valorant.py
 """
+
 import asyncio
 import json
 from pathlib import Path
-
-import httpx
 
 from statcard.providers.valorant import (
     ValorantProviderError,
@@ -16,7 +15,7 @@ from statcard.providers.valorant import (
 from statcard.render import save_card
 
 # --- Edit these to your own account ---
-RIOT_NAME = "Horcus "
+RIOT_NAME = "Horcus"
 RIOT_TAG = "1995"
 REGION = "eu"  # one of: eu, na, ap, kr, br, latam
 
@@ -31,11 +30,8 @@ async def main() -> None:
     except ValorantProviderError as exc:
         print(f"CONFIG/DATA ERROR: {exc}")
         return
-    except httpx.HTTPStatusError as exc:
-        print(f"HTTP ERROR {exc.response.status_code}: {exc.request.url}")
-        return
 
-    # Save raw responses as fixtures for offline tests later
+    # Save the trimmed responses as fixtures for offline tests later
     FIXTURES_DIR.mkdir(parents=True, exist_ok=True)
     for key, payload in payloads.items():
         fixture_path = FIXTURES_DIR / f"valorant_{key}.json"
@@ -72,6 +68,7 @@ async def main() -> None:
     print("=" * 52)
     path = save_card(stats)
     print(f"\nCard saved to: {path}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -7,8 +7,13 @@ const previewImg = document.getElementById("preview");
 const skeleton = document.getElementById("skeleton");
 const statusBox = document.getElementById("status");
 const downloadLink = document.getElementById("download-link");
+const previewSection = document.querySelector(".preview");
+
+// Render's free tier can take ~50 s to wake up; give it some room.
+const REQUEST_TIMEOUT_MS = 90000;
 
 let countdownTimer = null;
+let objectUrl = null;
 
 function setStatus(message, kind = "error") {
     statusBox.textContent = message;
@@ -30,6 +35,7 @@ function stopCountdown() {
 
 function startCountdown(seconds) {
     let left = seconds;
+    setStatus(`Rate limit reached. Retry in ${left}s.`, "warn");
     countdownTimer = setInterval(() => {
         left -= 1;
         if (left <= 0) {
@@ -49,6 +55,35 @@ function isValidRiotId(value) {
     return name.length > 0 && tag.length > 0;
 }
 
+function sanitizeFilename(value) {
+    return value.replace(/[\\/:*?"<>|#]/g, "_");
+}
+
+function releaseObjectUrl() {
+    if (objectUrl !== null) {
+        URL.revokeObjectURL(objectUrl);
+        objectUrl = null;
+    }
+}
+
+function setBusy(busy) {
+    submitBtn.disabled = busy;
+    submitBtn.textContent = busy ? "Generating…" : "Generate";
+    previewSection.setAttribute("aria-busy", String(busy));
+}
+
+function clearPreview() {
+    releaseObjectUrl();
+    previewImg.onload = null;
+    previewImg.onerror = null;
+    previewImg.hidden = true;
+    previewImg.classList.remove("enter");
+    previewImg.removeAttribute("src");
+    downloadLink.hidden = true;
+    downloadLink.removeAttribute("href");
+    skeleton.hidden = true;
+}
+
 riotInput.addEventListener("input", () => {
     const value = riotInput.value.trim();
     riotInput.classList.remove("is-valid", "is-invalid");
@@ -56,12 +91,12 @@ riotInput.addEventListener("input", () => {
     riotInput.classList.add(isValidRiotId(value) ? "is-valid" : "is-invalid");
 });
 
-function clearPreview() {
-    previewImg.hidden = true;
-    previewImg.classList.remove("enter");
-    previewImg.src = "";
-    downloadLink.hidden = true;
-    downloadLink.href = "";
+async function readErrorBody(response) {
+    try {
+        return await response.json();
+    } catch {
+        return null;
+    }
 }
 
 async function submitForm(event) {
@@ -81,36 +116,34 @@ async function submitForm(event) {
     const apiBase = window.STATCARD_API.replace(/\/$/, "");
     const url = `${apiBase}/api/valorant/${encodeURIComponent(riotId)}?region=${encodeURIComponent(region)}`;
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Generating…";
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+    setBusy(true);
     skeleton.hidden = false;
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, { signal: controller.signal });
 
         if (!response.ok) {
             skeleton.hidden = true;
-            let detail;
-            try {
-                const body = await response.json();
-                detail = typeof body.detail === "string" ? body.detail : body.detail?.message || "";
-            } catch {
-                detail = "";
-            }
+            const body = await readErrorBody(response);
+            const detail =
+                typeof body?.detail === "string" ? body.detail : body?.detail?.message || "";
 
             if (response.status === 429) {
-                let retry = 60;
-                try {
-                    retry = (await response.clone().json()).detail.retry_after ?? 60;
-                } catch {
-                    retry = parseInt(response.headers.get("Retry-After") ?? "60", 10);
-                }
-                setStatus(`Rate limit reached. Retry in ${retry}s.`, "warn");
-                startCountdown(retry);
+                const retry = Number(
+                    body?.detail?.retry_after ??
+                        response.headers.get("Retry-After") ??
+                        60
+                );
+                startCountdown(Number.isFinite(retry) && retry > 0 ? retry : 60);
             } else if (response.status === 404) {
                 setStatus(`Player "${riotId}" not found on region ${region.toUpperCase()}.`);
             } else if (response.status === 400) {
                 setStatus(detail || "Invalid request.");
+            } else if (response.status === 503) {
+                setStatus("The stats provider is busy right now. Try again in a minute.");
             } else {
                 setStatus(`Server error: ${detail || response.status}. Try again in a minute.`);
             }
@@ -118,27 +151,41 @@ async function submitForm(event) {
         }
 
         const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
+        releaseObjectUrl();
+        objectUrl = URL.createObjectURL(blob);
 
         previewImg.onload = () => {
             skeleton.hidden = true;
             previewImg.hidden = false;
             previewImg.classList.add("enter");
+            previewSection.setAttribute("aria-busy", "false");
+        };
+        previewImg.onerror = () => {
+            skeleton.hidden = true;
+            previewSection.setAttribute("aria-busy", "false");
+            setStatus("The card could not be displayed. Please try again.");
         };
         previewImg.alt = `Valorant stat card for ${riotId}`;
         previewImg.src = objectUrl;
 
         downloadLink.href = objectUrl;
-        downloadLink.download = `${riotId.replace("#", "_")}_${region}.png`;
+        downloadLink.download = `${sanitizeFilename(riotId)}_${region}.png`;
         downloadLink.hidden = false;
 
         setStatus("Card generated successfully.", "info");
     } catch (err) {
         skeleton.hidden = true;
-        setStatus(`Network error: ${err.message}. Is the backend reachable?`);
+        if (err.name === "AbortError") {
+            setStatus(
+                "The server is taking too long (it may be waking up). Try again in a moment.",
+                "warn"
+            );
+        } else {
+            setStatus(`Network error: ${err.message}. Is the backend reachable?`);
+        }
     } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Generate";
+        clearTimeout(timeout);
+        setBusy(false);
     }
 }
 

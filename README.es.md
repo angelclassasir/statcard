@@ -15,7 +15,7 @@ StatCard obtiene tus estadísticas de **Valorant**, las unifica en un formato co
 
 > 🌐 **Demo en vivo:** [statcard.pages.dev](https://statcard.pages.dev) — genera tu tarjeta sin instalar nada.
 
-> 📦 **Estado:** v1 (CLI), v2 (aplicación web pública) y v2.1 (calidad y pulido) están terminadas y en producción. La v3 (más juegos e integraciones) está planificada. Mira la [hoja de ruta](#hoja-de-ruta).
+> 📦 **Estado:** v1 (CLI), v2 (aplicación web pública), v2.1 (calidad y pulido) y v2.2 (endurecimiento) están terminadas y en producción. La v3 (más juegos e integraciones) está planificada. Mira la [hoja de ruta](#hoja-de-ruta).
 
 ---
 
@@ -34,8 +34,9 @@ StatCard obtiene tus estadísticas de **Valorant**, las unifica en un formato co
 - ⚡ **Núcleo pensado para CLI**: un comando, una tarjeta
 - 🎨 **Tema oscuro** con una paleta limpia y moderna
 - 🔤 **Fuentes según el alfabeto**: latino y tailandés (Chakra Petch), coreano, japonés y chino (Noto Sans KR / JP / SC), cirílico (Noto Sans). Los nombres de jugador se ven bien sea cual sea su escritura
-- 💾 **Caché en disco** para respetar los límites de la API: TTL de 10 min en la CLI y caché compartida de 1 h en la web
-- 🛡️ **Límite de peticiones**: ventana deslizante de 3 por minuto por IP y 20 por minuto en total
+- 💾 **Caché en disco** para respetar los límites de la API: TTL de 10 min en la CLI y caché compartida de 1 h en la web. Los datos se recortan antes de guardarlos (el JSON completo de las partidas es ~96 % información sin usar) y las entradas se eliminan al pasar de 500 archivos / 64 MB
+- 🛡️ **Límite de peticiones**: ventana deslizante de 3 por minuto por IP y 20 por minuto en total; las peticiones mal formadas no consumen cuota
+- ⚡ **Rápido y cacheable**: las tres llamadas a la API van en paralelo, el PNG se renderiza fuera del event loop y las tarjetas se sirven con `ETag` / `304 Not Modified`
 - 🔒 **Privacidad y seguridad**: la clave de la API nunca sale del servidor, CSP y cabeceras de seguridad con `_headers`, sin cookies
 - ♿ **Accesible**: contraste ≥ 4,5:1, enlace para saltar al contenido, foco de teclado visible, campos con etiqueta y `prefers-reduced-motion` respetado
 - 🧪 **Tests sin conexión** con respuestas de la API guardadas
@@ -92,17 +93,28 @@ El diseño completo de la v2 está en [`docs/INFRASTRUCTURE.md`](docs/INFRASTRUC
 - **Selector de juegos** con logos oficiales: Valorant activo, CS2 desactivado con la etiqueta "v3"
 - **SEO e identidad**: título único, meta descripción, canonical, favicon SVG, `robots.txt`, `sitemap.xml` y `404.html` con la estética de la web
 - **Compartir en redes**: Open Graph y `twitter:card = summary_large_image` con una vista previa de 1200×630 generada con nuestro propio flujo de Pillow
-- **Rendimiento**: fuentes WOFF2 alojadas en el propio repo (sin CDNs), imágenes con carga diferida y dimensiones explícitas, cero dependencias de JS
+- **Rendimiento**: fuentes TTF alojadas en el propio repo (sin CDNs), imágenes con carga diferida y dimensiones explícitas, cero dependencias de JS
 - **Accesibilidad**: contraste ≥ 4,5:1, enlace para saltar al contenido, foco de teclado visible, campos con etiqueta, textos `alt` y `prefers-reduced-motion` respetado
 - **Seguridad**: `_headers` con CSP, `X-Content-Type-Options` y `Referrer-Policy`; caché inmutable de fuentes; la clave de la API nunca sale del servidor
 - **Pulido de UX**: brillo en la portada, galería de tarjetas de ejemplo, esqueleto de carga, animación de entrada de la tarjeta, selector de región y cuenta atrás visual ante un 429
 - **Confianza**: nota de privacidad (el Riot ID se envía a HenrikDev, se cachea ≤ 1 h, sin cookies), avisos de marcas registradas y enlaces de contacto
 
+### v2.2 — Endurecimiento (terminada ✅)
+
+- **Errores correctos**: un jugador inexistente devuelve 404 (no 502), un límite de HenrikDev devuelve 503 y una clave rota devuelve 500
+- **Caché rediseñada**: los datos se recortan a los campos que usa el parser, las escrituras son atómicas, las entradas caducadas se borran y el almacén se vacía al pasar de 500 archivos / 64 MB
+- **Límite de peticiones**: solo se confía en el salto de `X-Forwarded-For` que añade el proxy, y las peticiones inválidas ya no consumen cuota
+- **Rendimiento**: llamadas a la API en paralelo, renderizado del PNG en un threadpool, soporte de `ETag` / 304 y logo de CS2 reducido de 559 KB a 7 KB
+- **Frontend**: timeout de petición con mensaje de arranque en frío, liberación de object URLs y mensajes mejores para 404/429/503
+- **Higiene del repo**: CI en verde (lint, formato, tipos, tests), hooks de pre-commit, changelog, textos OFL y `.gitignore` reescrito
+
 ### v3 — Más juegos e integraciones (planificada 📋)
 
 - Proveedor de CS2 (API de FACEIT frente a Leetify; fuente por decidir)
 - Bot de Discord (`/stats`) que reutilice los proveedores
-- Paginación de partidas para un K/D exacto de toda la temporada
+- Paginación de partidas para un K/D exacto de toda la temporada (HenrikDev usa
+  identificadores de temporada distintos en partidas y MMR, así que la tarjeta
+  cae por ahora en `RECENT`)
 - Detección automática de región (probar `eu` / `na` / `ap` / `kr` hasta que haya datos)
 
 > **Sobre CS2:** Valve no ofrece una API pública con estadísticas competitivas de CS2. Las alternativas exigen verificación de identidad (API de FACEIT) o que el jugador use un servicio de analítica de terceros (Leetify). El soporte de CS2 llegará en la v3 cuando se elija la fuente de datos.
@@ -141,9 +153,12 @@ python -m statcard valorant "TuNombre#TuTag" --no-cache
 
 # Indicar otra región
 python -m statcard valorant "TuNombre#TuTag" --region na
+
+# Guardar la tarjeta en una ruta concreta
+python -m statcard valorant "TuNombre#TuTag" --output tarjetas/yo.png
 ```
 
-Las imágenes se guardan en `output/`.
+Las imágenes se guardan en `output/` por defecto.
 
 ### Ejecutar la web en local
 
@@ -172,12 +187,18 @@ La suite funciona sin conexión: usa respuestas de la API guardadas.
 
 ## Fuentes
 
-El proyecto usa fuentes con licencia SIL Open Font License:
+El proyecto usa fuentes con licencia SIL Open Font License 1.1, que exige
+redistribuir el texto de la licencia junto con los archivos de fuente:
 
-- **Chakra Petch** (latino + tailandés): incluida en el repositorio.
-- **Noto Sans KR / JP / SC + Noto Sans** (CJK + Cyrillic fallbacks): pesan mucho (~40 MB total), así que se descargan en local y están excluidas de git. Ejecuta `uv run python scripts/fetch_noto_fonts.py` para descargarlas (también se ejecutan automáticamente en las compilaciones de Render). 
+- **Chakra Petch** (latino + tailandés): incluida en el repositorio, licencia en
+  [`assets/fonts/OFL-ChakraPetch.txt`](assets/fonts/OFL-ChakraPetch.txt).
+- **Noto Sans KR / JP / SC + Noto Sans** (reservas CJK + cirílico): pesan mucho
+  (~40 MB en total), así que se descargan en local y están excluidas de git.
+  Ejecuta `uv run python scripts/fetch_noto_fonts.py` para descargarlas junto con
+  sus textos OFL (también se ejecuta en las compilaciones de Render).
 
-Consulta [`assets/fonts/README.md`](assets/fonts/README.md) para ver los comandos de descarga manual.
+Esta obligación OFL solo afecta a las **fuentes**, no al código del proyecto,
+que sigue bajo la licencia PolyForm Noncommercial (ver [Licencia](#licencia)).
 
 ## Estructura del proyecto
 
@@ -186,7 +207,7 @@ statcard/
 ├── src/statcard/
 │   ├── __main__.py            # Punto de entrada de la CLI (argparse)
 │   ├── models.py              # Formato común de estadísticas (pydantic)
-│   ├── cache.py               # Caché en disco con caducidad
+│   ├── cache.py               # Caché en disco (TTL, escrituras atómicas, eviction)
 │   ├── render.py              # Renderizado de la tarjeta (Pillow)
 │   ├── providers/
 │   │   └── valorant.py        # HenrikDev -> formato común
@@ -201,24 +222,26 @@ statcard/
 │   ├── index.html             # Selector de juego, formulario, vista previa, galería
 │   ├── app.js                 # Fetch, validación, esqueleto de carga, cuenta atrás del 429
 │   ├── config.js              # URL del backend (Render)
-│   ├── styles.css             # WOFF2 propio, brillo, animaciones, accesibilidad
+│   ├── styles.css             # TTF propio, brillo, animaciones, accesibilidad
 │   ├── 404.html               # Página "PLAYER NOT FOUND" con la estética de la web
-│   ├── _headers               # CSP, nosniff, Referrer-Policy, reglas de caché
+│   ├── _headers               # CSP, HSTS, nosniff, Referrer-Policy, reglas de caché
 │   ├── robots.txt             # Reglas de rastreo + referencia al sitemap
 │   ├── sitemap.xml            # Sitemap de una sola página
 │   ├── favicon.svg            # Marca de statcard
 │   └── assets/                # Fuentes, logos de juegos, imagen OG, tarjetas de ejemplo
-├── assets/fonts/              # Fuentes TTF originales (SIL OFL)
+├── assets/fonts/              # Fuentes TTF originales (SIL OFL) + textos de licencia
 ├── tests/                     # Suite pytest (sin conexión, respuestas guardadas)
 ├── scripts/
 │   ├── smoke_valorant.py      # Comprobación manual contra la API real
-│   └── render_social.py       # Genera la imagen OG de 1200×630
-│   └── fetch_noto_fonts.py    # Descarga fuentes de reserva Noto que no están en git
+│   ├── render_social.py       # Genera la imagen OG de 1200×630
+│   └── fetch_noto_fonts.py    # Descarga fuentes Noto y sus textos OFL
 ├── docs/
 │   ├── INFRASTRUCTURE.md      # Documento de diseño de la v2
 │   └── images/                # Capturas del README
 ├── examples/                  # Tarjetas de ejemplo para este README
 ├── .env.example               # Plantilla de claves de API
+├── .pre-commit-config.yaml    # Hooks de Ruff (ejecuta pre-commit install una vez)
+├── CHANGELOG.md               # Historial de versiones
 └── pyproject.toml
 ```
 
@@ -229,7 +252,7 @@ Es un proyecto de fans, educativo y sin ánimo de lucro.
 - No está afiliado, respaldado ni patrocinado por Riot Games.
 - Los datos de Valorant se obtienen mediante la API no oficial de HenrikDev.
 - Valorant y las marcas relacionadas son propiedad de Riot Games, Inc.
-- Todos los recursos visuales (fondos, iconos, fuentes) son originales, creados por el autor o proceden de licencias libres (SIL OFL), salvo los logos de juegos de terceros del selector, que pertenecen a sus respectivos propietarios.
+- Todos los recursos visuales (fondos, iconos) son originales o proceden de licencias libres. Las fuentes incluidas se distribuyen bajo la SIL Open Font License 1.1, con sus textos de licencia en `assets/fonts/`. Los logos de juegos de terceros del selector pertenecen a sus respectivos propietarios.
 
 ## Licencia
 

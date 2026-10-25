@@ -7,15 +7,15 @@ ASSETS_DIR = Path(__file__).resolve().parents[3] / "assets"
 FONTS_DIR = ASSETS_DIR / "fonts"
 
 # --- Palette (RGB tuples) ---
-BACKGROUND = (16, 17, 23)         # near-black canvas
-PANEL = (28, 30, 40)              # raised panels
-PANEL_EDGE = (45, 48, 62)         # panel borders and separators
-ACCENT = (255, 70, 85)            # Valorant accent (red)
-ACCENT_CS2 = (255, 165, 0)        # CS2 accent (orange)
-TEXT_PRIMARY = (242, 243, 248)    # headings and key stats
+BACKGROUND = (16, 17, 23)  # near-black canvas
+PANEL = (28, 30, 40)  # raised panels
+PANEL_EDGE = (45, 48, 62)  # panel borders and separators
+ACCENT = (255, 70, 85)  # Valorant accent (red)
+ACCENT_CS2 = (255, 165, 0)  # CS2 accent (orange)
+TEXT_PRIMARY = (242, 243, 248)  # headings and key stats
 TEXT_SECONDARY = (150, 154, 170)  # labels and secondary text
-WIN = (86, 197, 127)              # win green
-LOSS = (227, 84, 95)              # loss red
+WIN = (86, 197, 127)  # win green
+LOSS = (227, 84, 95)  # loss red
 
 # --- Card geometry (pixels) ---
 CARD_WIDTH = 1000
@@ -30,10 +30,10 @@ FONT_BODY = FONTS_DIR / "ChakraPetch-Regular.ttf"
 
 # Fallback fonts for non-Latin player names (downloaded locally, git-ignored)
 FONT_FALLBACKS = {
-    "kr": FONTS_DIR / "NotoSansKR.ttf",        # Hangul (Korean)
-    "jp": FONTS_DIR / "NotoSansJP.ttf",        # Kana + kanji (Japanese)
-    "cjk": FONTS_DIR / "NotoSansSC.ttf",       # Hanzi (Chinese)
-    "cyrillic": FONTS_DIR / "NotoSans.ttf",    # Russian, Ukrainian, etc.
+    "kr": FONTS_DIR / "NotoSansKR.ttf",  # Hangul (Korean)
+    "jp": FONTS_DIR / "NotoSansJP.ttf",  # Kana + kanji (Japanese)
+    "cjk": FONTS_DIR / "NotoSansSC.ttf",  # Hanzi (Chinese)
+    "cyrillic": FONTS_DIR / "NotoSans.ttf",  # Russian, Ukrainian, etc.
 }
 
 # --- Font sizes (pixels) ---

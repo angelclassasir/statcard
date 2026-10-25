@@ -1,5 +1,7 @@
 """Card rendering with Pillow: PlayerStats -> PNG image."""
+
 import contextlib
+from datetime import UTC
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -30,12 +32,12 @@ _DATA_SOURCES = {
 }
 
 # Loaded fonts are cached: reloading a TTF per drawn box is wasteful
-_FONT_CACHE: dict[tuple[str, int], ImageFont.FreeTypeFont] = {}
+_FONT_CACHE: dict[tuple[str, int, str | None], ImageFont.FreeTypeFont] = {}
 
 
 def _font(path: Path, size: int, variant: str | None = None) -> ImageFont.FreeTypeFont:
     """Load a TTF font, optionally switching a variable font to a named instance."""
-    key = (str(path), size)
+    key = (str(path), size, variant)
     if key not in _FONT_CACHE:
         font = ImageFont.truetype(str(path), size)
         if variant is not None:
@@ -46,14 +48,28 @@ def _font(path: Path, size: int, variant: str | None = None) -> ImageFont.FreeTy
     return _FONT_CACHE[key]
 
 
+def _fit_text(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    font: ImageFont.FreeTypeFont | ImageFont.ImageFont,
+    max_width: int,
+) -> str:
+    """Trim text with an ellipsis so it never overflows the given width."""
+    if draw.textlength(text, font=font) <= max_width:
+        return text
+    ellipsis = "…"
+    trimmed = text
+    while trimmed and draw.textlength(trimmed + ellipsis, font=font) > max_width:
+        trimmed = trimmed[:-1]
+    return f"{trimmed}{ellipsis}" if trimmed else ""
+
+
 def _detect_script(text: str) -> str:
     """Detect the dominant non-Latin script used in a player name."""
     codepoints = [ord(ch) for ch in text]
     # Hangul syllables and jamo (Korean)
     if any(
-        0xAC00 <= cp <= 0xD7AF
-        or 0x1100 <= cp <= 0x11FF
-        or 0x3130 <= cp <= 0x318F
+        0xAC00 <= cp <= 0xD7AF or 0x1100 <= cp <= 0x11FF or 0x3130 <= cp <= 0x318F
         for cp in codepoints
     ):
         return "kr"
@@ -62,9 +78,7 @@ def _detect_script(text: str) -> str:
         return "jp"
     # CJK unified ideographs (Chinese, and kanji without kana)
     if any(
-        0x4E00 <= cp <= 0x9FFF
-        or 0x3400 <= cp <= 0x4DBF
-        or 0xF900 <= cp <= 0xFAFF
+        0x4E00 <= cp <= 0x9FFF or 0x3400 <= cp <= 0x4DBF or 0xF900 <= cp <= 0xFAFF
         for cp in codepoints
     ):
         return "cjk"
@@ -72,6 +86,7 @@ def _detect_script(text: str) -> str:
     if any(0x0400 <= cp <= 0x4FF for cp in codepoints):
         return "cyrillic"
     return "latin"
+
 
 def _title_font(text: str, size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
     """Pick the best font for a player name, degrading gracefully if files are missing."""
@@ -90,16 +105,27 @@ def _draw_header(draw: ImageDraw.ImageDraw, stats: PlayerStats) -> None:
     """Draw the game tag, player name and rank line."""
     x = theme.PADDING
     accent = _GAME_ACCENT.get(stats.game, theme.ACCENT)
+    content_width = theme.CARD_WIDTH - 2 * theme.PADDING
 
     label_font = _font(theme.FONT_SUBTITLE, theme.SIZE_STAT_LABEL)
     draw.text((x, _HEADER_Y), stats.game.upper(), font=label_font, fill=accent)
 
     name_font = _title_font(stats.player_name, theme.SIZE_TITLE)
-    draw.text((x, _HEADER_Y + 22), stats.player_name, font=name_font, fill=theme.TEXT_PRIMARY)
+    draw.text(
+        (x, _HEADER_Y + 22),
+        _fit_text(draw, stats.player_name, name_font, content_width),
+        font=name_font,
+        fill=theme.TEXT_PRIMARY,
+    )
 
     rank_font = _font(theme.FONT_BODY, 20)
     rank_text = f"{stats.current_rank}  •  peak {stats.peak_rank}  •  Lv {stats.level}"
-    draw.text((x, _HEADER_Y + 80), rank_text, font=rank_font, fill=theme.TEXT_SECONDARY)
+    draw.text(
+        (x, _HEADER_Y + 80),
+        _fit_text(draw, rank_text, rank_font, content_width),
+        font=rank_font,
+        fill=theme.TEXT_SECONDARY,
+    )
 
     # Separator between header and stats
     draw.line(
@@ -108,13 +134,13 @@ def _draw_header(draw: ImageDraw.ImageDraw, stats: PlayerStats) -> None:
         width=1,
     )
 
+
 def _draw_stats_row(draw: ImageDraw.ImageDraw, stats: PlayerStats) -> None:
     """Draw the three big stat blocks separated by vertical lines."""
-    losses = max(stats.total_matches - stats.wins, 0)
     blocks = [
         (stats.get_kd_display(), f"K/D RATIO ({stats.kd_scope})"),
         (stats.get_win_rate_display(), "WIN RATE"),
-        (f"{stats.wins}W - {losses}L", "SEASON RECORD"),
+        (f"{stats.wins}W - {stats.losses}L", "SEASON RECORD"),
     ]
 
     value_font = _font(theme.FONT_SUBTITLE, theme.SIZE_STAT_VALUE)
@@ -142,6 +168,7 @@ def _draw_matches_strip(draw: ImageDraw.ImageDraw, stats: PlayerStats) -> None:
     gap = 12
     box_w = (theme.CARD_WIDTH - 2 * theme.PADDING - gap * (len(matches) - 1)) // len(matches)
     x = theme.PADDING
+    text_width = box_w - 46  # left padding + space for the W/L letter
 
     map_font = _font(theme.FONT_SUBTITLE, 18)
     score_font = _font(theme.FONT_BODY, theme.SIZE_STAT_LABEL - 2)
@@ -166,7 +193,7 @@ def _draw_matches_strip(draw: ImageDraw.ImageDraw, stats: PlayerStats) -> None:
         )
         draw.text(
             (x + 16, _STRIP_Y + 12),
-            str(match.get("map", "?")),
+            _fit_text(draw, str(match.get("map", "?")), map_font, text_width),
             font=map_font,
             fill=theme.TEXT_PRIMARY,
         )
@@ -174,10 +201,15 @@ def _draw_matches_strip(draw: ImageDraw.ImageDraw, stats: PlayerStats) -> None:
             f"{match.get('rounds_won', '?')}-{match.get('rounds_lost', '?')}"
             f"  •  {match.get('kills', 0)}K/{match.get('deaths', 0)}D"
         )
-        draw.text((x + 16, _STRIP_Y + 38), score, font=score_font, fill=theme.TEXT_SECONDARY)
+        draw.text(
+            (x + 16, _STRIP_Y + 38),
+            _fit_text(draw, score, score_font, text_width),
+            font=score_font,
+            fill=theme.TEXT_SECONDARY,
+        )
         draw.text(
             (x + 16, _STRIP_Y + 62),
-            str(match.get("agent", "")),
+            _fit_text(draw, str(match.get("agent", "")), score_font, text_width),
             font=score_font,
             fill=theme.TEXT_SECONDARY,
         )
@@ -195,7 +227,12 @@ def _draw_footer(draw: ImageDraw.ImageDraw, stats: PlayerStats) -> None:
     """Draw the attribution footer at the bottom of the card."""
     footer_font = _font(theme.FONT_BODY, theme.SIZE_FOOTER)
     source = _DATA_SOURCES.get(stats.game, "the game API")
-    right = f"stats via {source} • {stats.last_updated:%Y-%m-%d %H:%M}"
+
+    updated = stats.last_updated
+    if updated.tzinfo is not None:
+        updated = updated.astimezone(UTC)
+    right = f"stats via {source} • {updated:%Y-%m-%d %H:%M} UTC"
+
     draw.text(
         (theme.PADDING, _FOOTER_Y),
         "statcard",
@@ -205,7 +242,12 @@ def _draw_footer(draw: ImageDraw.ImageDraw, stats: PlayerStats) -> None:
     )
     draw.text(
         (theme.CARD_WIDTH - theme.PADDING, _FOOTER_Y),
-        right,
+        _fit_text(
+            draw,
+            right,
+            footer_font,
+            theme.CARD_WIDTH - 2 * theme.PADDING - 90,
+        ),
         font=footer_font,
         fill=theme.TEXT_SECONDARY,
         anchor="rs",
@@ -233,9 +275,13 @@ def render_card(stats: PlayerStats) -> Image.Image:
     return img
 
 
-def save_card(stats: PlayerStats, filename: str | None = None) -> Path:
-    """Render the card and save it as a PNG inside output/."""
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    path = OUTPUT_DIR / (filename or f"{stats.game}_card.png")
-    render_card(stats).save(path)
-    return path
+def save_card(stats: PlayerStats, path: str | Path | None = None) -> Path:
+    """Render the card and save it as a PNG.
+
+    ``path`` is used as-is (relative to the current directory); when omitted the
+    card goes to ``output/<game>_card.png``.
+    """
+    target = Path(path) if path is not None else OUTPUT_DIR / f"{stats.game}_card.png"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    render_card(stats).save(target)
+    return target

@@ -1,12 +1,16 @@
 """Offline tests for the FastAPI backend (no API key, no network)."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 import pytest
 from fastapi.testclient import TestClient
 
 from statcard.models import PlayerStats
-from statcard.providers.valorant import ValorantNotFoundError
+from statcard.providers.valorant import (
+    ValorantAuthError,
+    ValorantNotFoundError,
+    ValorantRateLimitedError,
+)
 from statcard.web import api as web_api
 from statcard.web.app import create_app
 from statcard.web.settings import Settings
@@ -40,7 +44,7 @@ def _make_stats() -> PlayerStats:
                 "deaths": 18,
             }
         ],
-        last_updated=datetime(2026, 10, 4, 12, 0),
+        last_updated=datetime(2026, 10, 4, 12, 0, tzinfo=UTC),
     )
 
 
@@ -71,6 +75,15 @@ def test_card_is_png_with_cache_header(client: TestClient) -> None:
     assert response.headers["content-type"] == "image/png"
     assert response.content.startswith(b"\x89PNG")
     assert "max-age=3600" in response.headers["cache-control"]
+    assert response.headers["etag"]
+
+
+def test_card_supports_etag_revalidation(client: TestClient) -> None:
+    first = client.get("/api/valorant/Horcus%231995")
+    etag = first.headers["etag"]
+    second = client.get("/api/valorant/Horcus%231995", headers={"if-none-match": etag})
+    assert second.status_code == 304
+    assert second.content == b""
 
 
 def test_json_endpoint_exposes_kd_scope(client: TestClient) -> None:
@@ -87,12 +100,36 @@ def test_unknown_region_is_400(client: TestClient) -> None:
     assert client.get("/api/valorant/Horcus%231995?region=mars").status_code == 400
 
 
+def test_region_is_case_insensitive(client: TestClient) -> None:
+    assert client.get("/api/valorant/Horcus%231995?region=EU").status_code == 200
+
+
 def test_not_found_maps_to_404(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     async def boom(*args: object, **kwargs: object) -> PlayerStats:
         raise ValorantNotFoundError("Player not found (404): x")
 
     monkeypatch.setattr(web_api, "fetch_valorant_stats", boom)
     assert client.get("/api/valorant/Ghost%230000").status_code == 404
+
+
+def test_upstream_rate_limit_maps_to_503(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    async def boom(*args: object, **kwargs: object) -> PlayerStats:
+        raise ValorantRateLimitedError("429")
+
+    monkeypatch.setattr(web_api, "fetch_valorant_stats", boom)
+    assert client.get("/api/valorant/Horcus%231995").status_code == 503
+
+
+def test_upstream_auth_error_maps_to_500(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    async def boom(*args: object, **kwargs: object) -> PlayerStats:
+        raise ValorantAuthError("401")
+
+    monkeypatch.setattr(web_api, "fetch_valorant_stats", boom)
+    assert client.get("/api/valorant/Horcus%231995").status_code == 500
 
 
 def test_per_ip_rate_limit_returns_429(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -115,3 +152,26 @@ def test_global_cap_across_ips(monkeypatch: pytest.MonkeyPatch) -> None:
     assert ok1.status_code == 200
     assert ok2.status_code == 200
     assert third.status_code == 429
+
+
+def test_spoofed_forwarded_for_only_counts_the_last_hop(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(web_api, "fetch_valorant_stats", _fake_fetch)
+    limited = TestClient(create_app(Settings(rate_per_min=1, rate_global_per_min=50)))
+
+    first = limited.get("/api/valorant/A%23EU", headers={"x-forwarded-for": "1.1.1.1, 9.9.9.9"})
+    second = limited.get("/api/valorant/B%23EU", headers={"x-forwarded-for": "2.2.2.2, 9.9.9.9"})
+    assert first.status_code == 200
+    assert second.status_code == 429
+
+
+def test_invalid_request_does_not_consume_quota(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(web_api, "fetch_valorant_stats", _fake_fetch)
+    limited = TestClient(create_app(Settings(rate_per_min=1, rate_global_per_min=50)))
+
+    for _ in range(3):
+        assert limited.get("/api/valorant/NoTagHere").status_code == 400
+    assert limited.get("/api/valorant/Horcus%231995").status_code == 200

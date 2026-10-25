@@ -10,6 +10,8 @@
     <link rel="canonical" href="https://statcard.pages.dev/" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <meta name="theme-color" content="#101117" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="index,follow" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -59,7 +61,8 @@
         <form class="card-form" id="card-form" novalidate>
             <div class="field">
                 <label for="riot-id">Riot ID</label>
-                <input id="riot-id" name="riot-id" type="text" placeholder="Name#TAG" autocomplete="off" required
+                <input id="riot-id" name="riot-id" type="text" placeholder="Name#TAG" autocomplete="off"
+                    autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="24" required
                     aria-describedby="riot-hint" />
                 <p id="riot-hint" class="hint">Format: Name#TAG (e.g. Horcus#1995)</p>
             </div>
@@ -87,7 +90,8 @@
 
         <div id="status" class="status" role="status" aria-live="polite"></div>
 
-        <section class="preview" aria-label="Generated card">
+        <section class="preview" aria-label="Generated card" aria-busy="false">
+            <noscript><p class="noscript">Enable JavaScript to generate your card.</p></noscript>
             <div id="skeleton" class="skeleton" hidden aria-hidden="true"></div>
             <img id="preview" alt="" hidden width="1000" height="400" />
             <a id="download-link" class="download-link" href="" hidden>⬇ Save PNG</a>

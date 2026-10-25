@@ -15,7 +15,7 @@ StatCard fetches your stats from **Valorant**, unifies them into a common format
 
 > 🌐 **Live demo:** [statcard.pages.dev](https://statcard.pages.dev) — generate your card without installing anything.
 
-> 📦 **Status:** v1 (CLI), v2 (public web app) and v2.1 (quality and polish) are shipped and in production. v3 (more games and integrations) is planned. See the [Roadmap](#roadmap).
+> 📦 **Status:** v1 (CLI), v2 (public web app), v2.1 (quality and polish) and v2.2 (hardening) are shipped and in production. v3 (more games and integrations) is planned. See the [Roadmap](#roadmap).
 
 ---
 
@@ -34,8 +34,9 @@ StatCard fetches your stats from **Valorant**, unifies them into a common format
 - ⚡ **CLI-first core**: one command, one card
 - 🎨 **Dark theme** with a clean, modern palette
 - 🔤 **Script-aware fonts**: Latin and Thai (Chakra Petch), Korean, Japanese and Chinese (Noto Sans KR / JP / SC), Cyrillic (Noto Sans). Player names render correctly regardless of script
-- 💾 **Smart disk caching** to respect API limits: 10 min TTL on the CLI, 1 h shared cache on the web
-- 🛡️ **Rate limiting**: sliding window of 3 requests/min per IP and 20/min global
+- 💾 **Smart disk caching** to respect API limits: 10 min TTL on the CLI, 1 h shared cache on the web. Payloads are trimmed before caching (the full match JSON is ~96% unused data) and entries are evicted past 500 files / 64 MB
+- 🛡️ **Rate limiting**: sliding window of 3 requests/min per IP and 20/min global; malformed requests do not consume quota
+- ⚡ **Fast and cacheable**: the three upstream calls run in parallel, PNG rendering runs off the event loop, and cards are served with `ETag` / `304 Not Modified`
 - 🔒 **Privacy and security**: API key never leaves the server, CSP and security headers via `_headers`, no cookies
 - ♿ **Accessible**: contrast ≥ 4.5:1, skip-to-content link, visible keyboard focus, labeled fields, `prefers-reduced-motion` respected
 - 🧪 **Offline test suite** using saved API fixtures
@@ -92,17 +93,27 @@ The full v2 design is documented in [`docs/INFRASTRUCTURE.md`](docs/INFRASTRUCTU
 - **Game selector** with official logos: Valorant live, CS2 disabled with a "v3" badge
 - **SEO and identity**: unique title, meta description, canonical, SVG favicon, `robots.txt`, `sitemap.xml`, themed `404.html`
 - **Social sharing**: Open Graph and `twitter:card = summary_large_image` with a 1200×630 preview rendered by our own Pillow pipeline
-- **Performance**: self-hosted WOFF2 fonts (no CDNs), lazy-loaded images with explicit dimensions, zero JS dependencies
+- **Performance**: self-hosted TTF fonts (no CDNs), lazy-loaded images with explicit dimensions, zero JS dependencies
 - **Accessibility**: contrast ≥ 4.5:1, skip-to-content link, visible keyboard focus, labeled fields, `alt` texts, `prefers-reduced-motion` respected
 - **Security**: `_headers` with CSP, `X-Content-Type-Options` and `Referrer-Policy`; immutable font caching; API key never leaves the server
 - **UX polish**: hero glow, sample-card showcase, loading skeleton, card entrance animation, region pills, visual countdown on 429
 - **Trust**: privacy note (Riot ID sent to HenrikDev, cached ≤ 1 h, no cookies), trademark notices, contact links
 
+### v2.2 — Hardening (shipped ✅)
+
+- **Correct error mapping**: an unknown player now returns 404 (not 502), upstream rate limits return 503 and a broken API key returns 500
+- **Cache redesign**: payloads are trimmed to the fields the parser needs, writes are atomic, expired entries are deleted and the store evicts past 500 files / 64 MB
+- **Rate limit fixes**: only the proxy-appended `X-Forwarded-For` hop is trusted, and invalid requests no longer consume quota
+- **Performance**: parallel upstream requests, PNG rendering in a threadpool, `ETag` / 304 support, CS2 logo reduced from 559 KB to 7 KB
+- **Frontend**: request timeout with a cold-start message, object-URL cleanup, better 404/429/503 messages
+- **Repo hygiene**: green CI (lint, format, types, tests), pre-commit hooks, changelog, OFL licence texts, rewritten `.gitignore`
+
 ### v3 — More games and integrations (planned 📋)
 
 - CS2 provider (FACEIT Data API vs Leetify; source TBD)
 - Discord bot (`/stats`) reusing the providers
-- Match pagination for exact full-season K/D
+- Match pagination for exact full-season K/D (HenrikDev uses different season
+  identifiers for matches and MMR, so the card currently falls back to `RECENT`)
 - Auto region detection (try `eu` / `na` / `ap` / `kr` until data is returned)
 
 > **About CS2:** Valve does not expose a public API for CS2 competitive stats. The alternatives either require identity verification (FACEIT Data API) or depend on the player using a third-party analytics service (Leetify). CS2 support will land in v3 once the data source is chosen.
@@ -141,9 +152,12 @@ python -m statcard valorant "YourName#YourTag" --no-cache
 
 # Specify a different region
 python -m statcard valorant "YourName#YourTag" --region na
+
+# Write the card to an explicit path
+python -m statcard valorant "YourName#YourTag" --output cards/me.png
 ```
 
-Output images are saved to `output/`.
+Output images are saved to `output/` by default.
 
 ### Running the web app locally
 
@@ -172,12 +186,18 @@ The suite is fully offline: it runs against saved API fixtures.
 
 ## Fonts
 
-The project uses fonts under the SIL Open Font License:
+The project uses fonts under the SIL Open Font License 1.1, which requires the
+licence text to be redistributed with the font files:
 
-- **Chakra Petch** (Latin + Thai): bundled with the repo.
-- **Noto Sans KR / JP / SC + Noto Sans** (CJK + Cyrillic fallbacks): heavy (~40 MB total), so they are downloaded locally and git-ignored. Run `uv run python scripts/fetch_noto_fonts.py` to download them (also runs automatically in Render builds). 
+- **Chakra Petch** (Latin + Thai): bundled with the repo, licence in
+  [`assets/fonts/OFL-ChakraPetch.txt`](assets/fonts/OFL-ChakraPetch.txt).
+- **Noto Sans KR / JP / SC + Noto Sans** (CJK + Cyrillic fallbacks): heavy
+  (~40 MB total), so they are downloaded locally and git-ignored. Run
+  `uv run python scripts/fetch_noto_fonts.py` to download them and their OFL
+  texts (also runs automatically in Render builds).
 
-See [`assets/fonts/README.md`](assets/fonts/README.md) for manual download commands.
+This OFL obligation only covers the **fonts**, not the project's own code,
+which stays under the PolyForm Noncommercial licence (see [License](#license)).
 
 ## Project structure
 
@@ -186,7 +206,7 @@ statcard/
 ├── src/statcard/
 │   ├── __main__.py            # CLI entry point (argparse)
 │   ├── models.py              # Common stat format (pydantic)
-│   ├── cache.py               # Disk cache with expiration
+│   ├── cache.py               # Disk cache (TTL, atomic writes, eviction)
 │   ├── render.py              # Card rendering (Pillow)
 │   ├── providers/
 │   │   └── valorant.py        # HenrikDev -> common format
@@ -201,24 +221,26 @@ statcard/
 │   ├── index.html             # Game selector, form, preview, showcase
 │   ├── app.js                 # Fetch, validation, skeleton, 429 countdown
 │   ├── config.js              # Backend URL (Render)
-│   ├── styles.css             # Self-hosted WOFF2, glow, animations, a11y
+│   ├── styles.css             # Self-hosted TTF, glow, animations, a11y
 │   ├── 404.html               # Themed "PLAYER NOT FOUND" page
-│   ├── _headers               # CSP, nosniff, Referrer-Policy, cache rules
+│   ├── _headers               # CSP, HSTS, nosniff, Referrer-Policy, cache rules
 │   ├── robots.txt             # Crawl rules + sitemap reference
 │   ├── sitemap.xml            # Single-page sitemap
 │   ├── favicon.svg            # statcard mark
 │   └── assets/                # Fonts, game logos, OG image, sample cards
-├── assets/fonts/              # SIL OFL TTF sources
+├── assets/fonts/              # SIL OFL TTF sources + licence texts
 ├── tests/                     # pytest suite (offline, saved fixtures)
 ├── scripts/
 │   ├── smoke_valorant.py      # Manual live-API check
 │   ├── render_social.py       # Generates the 1200×630 OG image
-│   └── fetch_noto_fonts.py    # Downloads git-ignored Noto fallback fonts
+│   └── fetch_noto_fonts.py    # Downloads Noto fallback fonts + OFL texts
 ├── docs/
 │   ├── INFRASTRUCTURE.md      # v2 web app design doc
 │   └── images/                # README screenshots
 ├── examples/                  # Sample cards for this README
 ├── .env.example               # Template for API keys
+├── .pre-commit-config.yaml    # Ruff hooks (run pre-commit install once)
+├── CHANGELOG.md               # Release history
 └── pyproject.toml
 ```
 
@@ -229,7 +251,7 @@ This is a fan-made, non-commercial educational project.
 - Not affiliated with, endorsed by, or sponsored by Riot Games.
 - Valorant data is fetched via the unofficial HenrikDev API.
 - Valorant and related trademarks are property of Riot Games, Inc.
-- All visual assets (backgrounds, icons, fonts) are either original, self-created, or sourced from free/open licenses (SIL OFL), except the third-party game logos used in the game selector, which belong to their respective owners.
+- All visual assets (backgrounds, icons) are either original or sourced from free/open licenses. The bundled fonts are distributed under the SIL Open Font License 1.1, with their licence texts in `assets/fonts/`. Third-party game logos used in the game selector belong to their respective owners.
 
 ## License
 

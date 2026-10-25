@@ -1,11 +1,5 @@
-
----
-
-## ✅ `.gitignore` corregido
-
-```gitignore
 # ==========================
-# Environments and Secrets
+# Environments and secrets
 # ==========================
 .env
 .env.*
@@ -20,58 +14,42 @@ __pycache__/
 *.so
 .Python
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
+.eggs/
+wheels/
 MANIFEST
 
 # ==========================
-# Virtual Environments
+# Virtual environments
 # ==========================
 .venv/
 venv/
 ENV/
 env/
-env.bak/
-venv.bak/
 
 # ==========================
-# Testing and Coverage
+# Testing and coverage
 # ==========================
 .pytest_cache/
 .coverage
 .coverage.*
 htmlcov/
+coverage.xml
 .tox/
 .nox/
-coverage.xml
-*.cover
 .hypothesis/
 
 # ==========================
-# Project Cache
+# Caches
 # ==========================
 .cache/
-statcard_cache/
-
-# ==========================
-# Linters
-# ==========================
 .ruff_cache/
 .mypy_cache/
+.pyrefly_cache/
 
 # ==========================
-# IDEs and Editors
+# IDEs and editors
 # ==========================
 .vscode/
 .idea/
@@ -88,12 +66,13 @@ Thumbs.db
 logs/
 
 # ==========================
-# Generated Files
+# Generated files
 # ==========================
 output/
 /*.png
 !assets/**/*.png
 !examples/**/*.png
+!frontend/**/*.png
 
 # Heavy fallback fonts (downloaded locally, documented in README)
 assets/fonts/NotoSans*.ttf

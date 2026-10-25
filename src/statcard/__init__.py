@@ -1,3 +1,3 @@
-"""StatCard: generate visual stat cards for Valorant and CS2."""
+"""statcard: generate visual, shareable stat cards for FPS games."""
 
-__version__ = "0.1.0"
+__version__ = "2.2.0"

@@ -32,7 +32,12 @@ def main() -> None:
     title_font = ImageFont.truetype(str(theme.FONT_TITLE), 52)
     sub_font = ImageFont.truetype(str(theme.FONT_BODY), 26)
     draw.text((60, 52), "statcard", font=title_font, fill=theme.TEXT_PRIMARY)
-    draw.text((60, 122), "Your Valorant stats, one PNG away.", font=sub_font, fill=theme.TEXT_SECONDARY)
+    draw.text(
+        (60, 122),
+        "Your Valorant stats, one PNG away.",
+        font=sub_font,
+        fill=theme.TEXT_SECONDARY,
+    )
 
     canvas.paste(card, (100, 190))
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)

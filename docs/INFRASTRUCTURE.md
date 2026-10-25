@@ -1,8 +1,10 @@
 # statcard v2 — Infrastructure & Web App Design
 
-Status: approved 2026-10-04. Scope: v2 = public web app. v3 = CS2 + integrations
-(see README roadmap). This document locks the decisions; do not deviate without
-an explicit owner decision recorded here.
+Status: approved 2026-10-04. v2.2 (2026-10-25) is a hardening pass
+(error mapping, cache trimming/eviction, rate-limit trust, performance); see
+`CHANGELOG.md`. Scope: v2 = public web app. v3 = CS2 + integrations (see README
+roadmap). This document locks the decisions; do not deviate without an explicit
+owner decision recorded here.
 
 ## 1. Architecture overview
 
@@ -55,11 +57,15 @@ an explicit owner decision recorded here.
 - `GET /healthz` → 200 `{"status":"ok","version":...}`. Exempt from rate limit.
   Used by Render healthcheck and by the UptimeRobot pinger.
 - `GET /api/valorant/{riot_id}?region=eu` → 200 `image/png` (rendered card).
-  Header: `Cache-Control: public, max-age=3600` (mirrors cache TTL).
+  Headers: `Cache-Control: public, max-age=3600` (mirrors cache TTL) and
+  `ETag: "<sha256>"`; a matching `If-None-Match` returns `304 Not Modified`.
 - `GET /api/valorant/{riot_id}/json` → 200 `application/json`
   (`PlayerStats.model_dump(mode="json")`). Debug + future bot reuse.
 - `riot_id` arrives URL-encoded (`Name%23TAG`); backend unquotes and validates
-  the `Name#TAG` shape before calling the provider.
+  the `Name#TAG` shape before calling the provider. Validation runs before the
+  rate limiter, so a 400 does not consume quota.
+- The provider raises typed errors (`ValorantNotFoundError`,
+  `ValorantRateLimitedError`, `ValorantAuthError`) so this mapping is exact.
 
 Error mapping (provider errors → HTTP):
 
@@ -77,16 +83,29 @@ Error mapping (provider errors → HTTP):
 - Sliding 60 s window, in-process: `dict[ip, deque[timestamps]]`, pruned on access.
 - Caps: `RATE_LIMIT_PER_MIN` (default 3) per IP; `RATE_LIMIT_GLOBAL_PER_MIN`
   (default 20) across all IPs.
-- Client IP: leftmost `X-Forwarded-For` if present, else `request.client.host`.
-  Spoofable by design: this is a courtesy/abuse deterrent, not a security boundary.
+- Client IP: rightmost `X-Forwarded-For` value (the hop appended by Render's
+  edge proxy), else `request.client.host`. The leftmost value is client
+  controlled and MUST NOT be trusted. Per-IP limits are a courtesy/abuse
+  deterrent, not a security boundary; the global cap is the hard ceiling.
 - Applies only to `/api/*`; `/healthz` and `/docs` exempt.
+- Validation (Riot ID shape + region) happens in a dependency declared before
+  the limiter, so malformed requests never consume quota.
 - Single-instance assumption (Render free = 1 instance). Multi-instance upgrade
   path = Redis-backed limiter (v2.x); keep the limiter backend swappable.
 
 ## 6. Caching
 
-- Reuse `src/statcard/cache.py` unchanged. Web reads/writes with
-  `ttl=WEB_CACHE_TTL` (default 3600).
+- Reuse `src/statcard/cache.py`. Web reads/writes with `ttl=WEB_CACHE_TTL`
+  (default 3600).
+- Payloads are **trimmed before caching** (`_slim_payloads` in the provider):
+  the matches endpoint returns round history and the kill feed (~96% of the
+  response, ~9 MB per 10 matches), none of which the renderer uses. Entries
+  drop to a few hundred KB.
+- Writes are atomic (temp file + `os.replace`) and the store evicts the oldest
+  entries past `MAX_ENTRIES = 500` / `MAX_BYTES = 64 MB`. Expired or corrupt
+  entries are deleted on read instead of accumulating forever.
+- Cache hits report the original fetch time via `cache.get_with_metadata()`, so
+  the card footer never claims fresher data than it has.
 - Render filesystem is ephemeral: cache lost on redeploy. Acceptable (cache is
   an optimization, not correctness). No paid volumes.
 - Upgrade path: Redis only if multi-instance becomes real.
@@ -98,7 +117,7 @@ Error mapping (provider errors → HTTP):
 - `app.js`: `fetch(STATCARD_API + /api/valorant/<encoded>?region=...)`;
   200 → blob → objectURL → `<img>`; 4xx/5xx → show JSON `detail`
   (429 also shows `retry_after`).
-- `config.js`: `window.STATCARD_API = "https://statcard.onrender.com";`
+- `config.js`: `window.STATCARD_API = "https://statcard-azwi.onrender.com";`
   The only file edited between deploys.
 - CORS: backend allows origins from `ALLOWED_ORIGINS` (local dev + pages.dev).
 
@@ -120,7 +139,7 @@ Primary — Render free web service + UptimeRobot pinger:
 - Free instances spin down after 15 min of inactivity; an UptimeRobot HTTP
   monitor hits `/healthz` every 5 min so the service never sleeps. Cold start
   (~30-50 s) only right after deploys.
-- Public URL: https://statcard.onrender.com
+- Public URL: https://statcard-azwi.onrender.com
 
 Plan B — Railway: $5 trial credit, then ~$1/mo. Always-on without pinger.
 Plan C — Hugging Face Spaces free CPU (Docker). Generally always-on, no SLA.
@@ -128,7 +147,7 @@ Plan C — Hugging Face Spaces free CPU (Docker). Generally always-on, no SLA.
 ## 10. Deploy order (chicken-and-egg resolved)
 
 1. Merge v2 code to master.
-2. Deploy backend on Render → obtain `https://statcard.onrender.com`.
+2. Deploy backend on Render → obtain `https://statcard-azwi.onrender.com`.
 3. Put that URL in `frontend/config.js`; set `ALLOWED_ORIGINS` on Render to the
    future `https://statcard.pages.dev`.
 4. Create CF Pages project (repo, output dir `frontend`, no build command).
@@ -138,10 +157,11 @@ Plan C — Hugging Face Spaces free CPU (Docker). Generally always-on, no SLA.
 
 `tests/test_web.py` with `fastapi.testclient.TestClient`:
 - Monkeypatch the web fetch layer to build `PlayerStats` from `tests/fixtures/*`;
-  assert 200 + PNG magic bytes + `Cache-Control` header.
-- 400 on malformed id; 404 when provider raises not-found.
+  assert 200 + PNG magic bytes + `Cache-Control` + `ETag`, and 304 on revalidation.
+- 400 on malformed id; 404/503/500 when the provider raises the typed errors.
 - Rate limit: 4th call inside the window → 429 with `Retry-After`;
-  `/healthz` never limited.
+  `/healthz` never limited; spoofed XFF prefixes ignored; invalid requests
+  do not consume quota.
 - JSON endpoint exposes `kd_scope`.
 
 ## 12. Security & legal
