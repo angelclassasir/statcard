@@ -264,4 +264,4 @@ See the [LICENSE](LICENSE) file for the full terms.
 
 ## Author
 
-Built by **Angel**, systems and networks student. [Portfolio](https://callmeangel.pages.dev/en/) · [GitHub](https://github.com/angelclassasir)
+Built by **Ángel**, systems and networks student. [GitHub](https://github.com/angelclassasir)
