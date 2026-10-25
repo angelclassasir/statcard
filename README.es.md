@@ -265,4 +265,4 @@ Consulta el archivo [LICENSE](LICENSE) para ver los términos completos.
 
 ## Autor
 
-Creado por **Ángel**, estudiante de sistemas y redes. [GitHub](https://github.com/angelclassasir)
+Creado por **Ángel**, estudiante de sistemas y redes. [Portfolio](https://callmeangel.pages.dev/) · [GitHub](https://github.com/angelclassasir)
